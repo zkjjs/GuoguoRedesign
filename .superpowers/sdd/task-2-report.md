@@ -166,6 +166,13 @@ four received tests-first fixes:
   current owned router on unmount. A tracking-router widget test covers lazy
   creation, replacement, and final disposal.
 
+GitHub macOS run `29707986547` found that `GoRouter` exposes a factory
+constructor and therefore cannot be subclassed by the initial tracking test.
+The lifecycle test now uses real `GoRouter` instances and Flutter's supported
+`ChangeNotifier.debugAssertNotDisposed` signal on each `routerDelegate`: it is
+true while owned, and throws `FlutterError` after replacement and unmount.
+Factory-call counts continue to prove lazy construction.
+
 ## Local runner constraint
 
 The pinned Flutter SDK remains checked out at
