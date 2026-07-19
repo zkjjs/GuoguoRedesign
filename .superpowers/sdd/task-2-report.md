@@ -1,6 +1,6 @@
 # Task 2 implementation report
 
-Status: **GREEN implementation prepared for GitHub macOS validation**
+Status: **DONE — GitHub macOS GREEN and goldens visually approved**
 
 ## Tests written before production
 
@@ -119,11 +119,57 @@ the pinned SDK from `FLUTTER_ROOT`, `Platform.resolvedExecutable`, or the local
 `.tooling/flutter` checkout, and fails explicitly if the deterministic asset
 is unavailable. The otherwise-green tofu-icon images were not committed.
 
+## Final GREEN verification
+
+Official GitHub macOS run `29707543417`, job `88246932475`, completed every
+step successfully using the original committed workflow and committed golden
+baselines:
+
+- bootstrap contracts;
+- committed Dart format check;
+- `flutter analyze` with zero issues;
+- all 10 unit, widget, and golden tests;
+- iOS engine precache;
+- CocoaPods install;
+- unsigned iOS simulator build.
+
+Both final PNGs are exactly 390x844. Visual inspection approved correct Chinese
+and Material icon rendering, unclipped navigation labels at default and 200%
+text scaling, and the opaque accessible material fallback.
+
+```text
+8ab9dfb2b96a5cd903050c49cc69ae660adead3f6e16b8fe84ac80d62a2d0c8d  test/golden/app_shell_default.png
+8b793cc64b1e3dec4b032c95947a304a748b92ac1bb6ff9de87da14c58abf645  test/golden/app_shell_accessible.png
+```
+
+## Independent review fixes
+
+The Task 2 independent review found one Important and three Minor issues. All
+four received tests-first fixes:
+
+- Reduced-motion mode now reads `MotionPolicy.usesFadeOnly` in `AppShell`,
+  disables the Material `NavigationBar` indicator animation with
+  `Duration.zero`, and applies an actual linear 180ms opacity-only transition
+  to branch content. It uses the same `StatefulNavigationShell` instance, so
+  independent branch stacks remain intact, and restores opacity from a guarded
+  post-frame callback only while mounted.
+- The 200% accessibility test now fails on every captured Flutter framework
+  error, not only overflow strings. It also asserts the zero-duration
+  NavigationBar animation and the 180ms opacity-only content path with no
+  slide or scale transition.
+- `createAppRouter()` allocates all five navigator keys inside each factory
+  call. A widget test mounts two live app routers together and checks for no
+  duplicate-key exception.
+- `GuoguoApp` no longer constructs a router in its widget constructor. Its
+  State lazily creates an owned router, preserves it across equivalent widget
+  rebuilds, disposes it before a changed router configuration, and disposes the
+  current owned router on unmount. A tracking-router widget test covers lazy
+  creation, replacement, and final disposal.
+
 ## Local runner constraint
 
 The pinned Flutter SDK remains checked out at
 `ee80f08bbf97172ec030b8751ceab557177a34a6`, but bootstrapping the local
 Flutter tool is blocked while resolving its pub dependencies. Therefore no
-local Flutter GREEN or golden PNG generation is claimed. The controller will
-run format/analyze/tests/iOS simulator build and generate the two golden PNGs
-on the official GitHub macOS runner before Task 2 is considered complete.
+local Flutter GREEN or golden PNG generation is claimed. The final macOS run
+above supplies the authoritative GREEN and visual evidence.
