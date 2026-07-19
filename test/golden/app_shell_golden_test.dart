@@ -14,15 +14,18 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(
-      GuoguoApp(
-        router: router,
-        reduceTransparencyChanges: const Stream<bool>.empty(),
+      RepaintBoundary(
+        key: const Key('golden'),
+        child: GuoguoApp(
+          router: router,
+          reduceTransparencyChanges: const Stream<bool>.empty(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
 
     await expectLater(
-      find.byType(MaterialApp),
+      find.byKey(const Key('golden')),
       matchesGoldenFile('app_shell_default.png'),
     );
   });
@@ -33,24 +36,27 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(
-          size: Size(390, 844),
-          highContrast: true,
-          disableAnimations: true,
-          accessibleNavigation: true,
-          textScaler: TextScaler.linear(2),
-        ),
-        child: GuoguoApp(
-          router: router,
-          reduceTransparencyChanges: Stream<bool>.value(true),
+      RepaintBoundary(
+        key: const Key('golden'),
+        child: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(390, 844),
+            highContrast: true,
+            disableAnimations: true,
+            accessibleNavigation: true,
+            textScaler: TextScaler.linear(2),
+          ),
+          child: GuoguoApp(
+            router: router,
+            reduceTransparencyChanges: Stream<bool>.value(true),
+          ),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
     await expectLater(
-      find.byType(MaterialApp),
+      find.byKey(const Key('golden')),
       matchesGoldenFile('app_shell_accessible.png'),
     );
   });

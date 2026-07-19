@@ -6,7 +6,9 @@ void main() {
   testWidgets('GuoguoApp renders the required default navigation', (
     tester,
   ) async {
-    await tester.pumpWidget(const GuoguoApp());
+    await tester.pumpWidget(
+      GuoguoApp(reduceTransparencyChanges: const Stream<bool>.empty()),
+    );
 
     expect(find.byType(NavigationDestination), findsNWidgets(4));
 

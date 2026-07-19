@@ -71,7 +71,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 180));
     expect(router.routeInformationProvider.value.uri.path, '/search');
 
-    final searchTarget = tester.getSize(find.byIcon(Icons.search));
+    final searchTarget = tester.getSize(
+      find.byWidgetPredicate(
+        (widget) => widget is NavigationDestination && widget.label == '搜索',
+      ),
+    );
     expect(searchTarget.width, greaterThanOrEqualTo(44));
     expect(searchTarget.height, greaterThanOrEqualTo(44));
   });
