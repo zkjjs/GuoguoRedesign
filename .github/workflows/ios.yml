@@ -2,6 +2,16 @@ name: Bootstrap Flutter iOS
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .fvmrc
+      - .github/workflows/ios.yml
+      - .gitignore
+      - tool/bootstrap_flutter.sh
+      - tool/bootstrap_flutter_test.sh
+      - tool/generate_task1_ci.sh
+      - tool/task1_ci_contract_test.sh
+      - tool/task1_templates/**
   push:
     paths:
       - .fvmrc
