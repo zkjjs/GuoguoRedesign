@@ -5,32 +5,64 @@ import '../core/theme/cinema_tokens.dart';
 import '../core/theme/glass_surface.dart';
 import '../core/theme/motion_policy.dart';
 
-class AppShell extends StatelessWidget {
+class AppShell extends StatefulWidget {
   const AppShell({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
+  @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell> {
+  double _contentOpacity = 1;
+
   void _selectBranch(int index) {
-    navigationShell.goBranch(
-      index,
-      initialLocation: index == navigationShell.currentIndex,
-    );
+    final motion = MotionPolicy.fromMediaQuery(context);
+    final changingBranch = index != widget.navigationShell.currentIndex;
+
+    if (motion.usesFadeOnly && changingBranch) {
+      setState(() => _contentOpacity = 0);
+    }
+
+    widget.navigationShell.goBranch(index, initialLocation: !changingBranch);
+
+    if (motion.usesFadeOnly && changingBranch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        setState(() => _contentOpacity = 1);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final motion = MotionPolicy.fromMediaQuery(context);
 
+    final body = motion.usesFadeOnly
+        ? AnimatedOpacity(
+            key: const Key('reducedMotionBranchFade'),
+            opacity: _contentOpacity,
+            duration: motion.transitionDuration,
+            curve: Curves.linear,
+            child: widget.navigationShell,
+          )
+        : widget.navigationShell;
+
     return Scaffold(
       extendBody: true,
-      body: navigationShell,
+      body: body,
       bottomNavigationBar: GlassSurface(
         child: SafeArea(
           top: false,
           child: NavigationBar(
-            animationDuration: motion.transitionDuration,
+            animationDuration: motion.usesFadeOnly
+                ? Duration.zero
+                : motion.transitionDuration,
             height: CinemaTokens.navHeight,
-            selectedIndex: navigationShell.currentIndex,
+            selectedIndex: widget.navigationShell.currentIndex,
             onDestinationSelected: _selectBranch,
             destinations: const [
               NavigationDestination(
