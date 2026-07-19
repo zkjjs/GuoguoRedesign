@@ -105,6 +105,11 @@ for deterministic test injection. Production passes neither and therefore
 continues to use native system typography. Only golden tests override Ahem;
 ordinary widget tests remain platform-independent.
 
+GitHub macOS run `29707074526` confirmed the approach reached analyze; its only
+finding was an unnecessary explicit `dart:typed_data` import because
+`flutter/services.dart` already exports `ByteData`. The redundant import was
+removed without changing the font-loading behavior.
+
 ## Local runner constraint
 
 The pinned Flutter SDK remains checked out at
