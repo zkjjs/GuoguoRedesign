@@ -144,7 +144,7 @@ if [[ "$(navigation_labels "$committed_navigation")" != "$expected_navigation_la
   exit 1
 fi
 
-grep -Fq 'await tester.pumpWidget(const GuoguoApp());' "$test_template"
+grep -Fq 'await tester.pumpWidget(GuoguoApp());' "$test_template"
 for widget_test in "$committed_test" "$test_template"; do
   grep -Fq 'GuoguoApp(' "$widget_test"
   grep -Fq 'findsNWidgets(4)' "$widget_test"
