@@ -117,7 +117,7 @@ done
 workflow_step 'Resolve committed project dependencies' | grep -Fq 'run: flutter pub get'
 workflow_step 'Check committed Dart formatting' | grep -Fq 'run: dart format --output=none --set-exit-if-changed lib test'
 workflow_step 'Analyze committed Flutter sources' | grep -Fq 'run: flutter analyze'
-workflow_step 'Run committed unit and widget tests' | grep -Fq 'run: flutter test --no-test-fonts'
+workflow_step 'Run committed unit and widget tests' | grep -Fq 'run: flutter test'
 workflow_step 'Install committed CocoaPods dependencies' | grep -Fq 'working-directory: ios'
 workflow_step 'Install committed CocoaPods dependencies' | grep -Fq 'run: pod install'
 workflow_step 'Build committed unsigned iOS simulator app' | grep -Fq 'run: flutter build ios --simulator --no-codesign'
