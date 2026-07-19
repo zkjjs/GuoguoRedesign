@@ -72,6 +72,14 @@ Static inspections confirmed the original bundle identifier, matching Dart
 and Swift EventChannel names, the Swift file's Xcode Sources membership, and
 all four exact Chinese labels.
 
+## Remote GREEN iteration 1
+
+GitHub macOS run `29706521426` reached `flutter analyze` with only two
+`const_with_non_const` errors: the new stateful `GuoguoApp` was still invoked
+with `const` in `lib/main.dart` and the Task 1 generated-test template. Both
+call sites were corrected without changing behavior, and the Task 1 contract
+was updated to match the still-valid non-const smoke-test construction.
+
 ## Local runner constraint
 
 The pinned Flutter SDK remains checked out at
