@@ -11,18 +11,18 @@ export 'router.dart' show createAppRouter;
 
 class GuoguoApp extends StatefulWidget {
   GuoguoApp({
-    GoRouter? router,
+    this.router,
+    this.routerFactory,
     Stream<bool>? reduceTransparencyChanges,
     this.theme,
     super.key,
-  }) : router = router ?? createAppRouter(),
-       ownsRouter = router == null,
+  }) : assert(router == null || routerFactory == null),
        reduceTransparencyChanges =
            reduceTransparencyChanges ??
            AccessibilityPreferences().reduceTransparencyChanges;
 
-  final GoRouter router;
-  final bool ownsRouter;
+  final GoRouter? router;
+  final GoRouter Function()? routerFactory;
   final Stream<bool> reduceTransparencyChanges;
   final ThemeData? theme;
 
@@ -31,10 +31,40 @@ class GuoguoApp extends StatefulWidget {
 }
 
 class _GuoguoAppState extends State<GuoguoApp> {
+  late GoRouter _router;
+  late bool _ownsRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    _configureRouter();
+  }
+
+  @override
+  void didUpdateWidget(GuoguoApp oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final configurationChanged =
+        !identical(widget.router, oldWidget.router) ||
+        !identical(widget.routerFactory, oldWidget.routerFactory);
+    if (!configurationChanged) {
+      return;
+    }
+
+    if (_ownsRouter) {
+      _router.dispose();
+    }
+    _configureRouter();
+  }
+
+  void _configureRouter() {
+    _ownsRouter = widget.router == null;
+    _router = widget.router ?? (widget.routerFactory ?? createAppRouter).call();
+  }
+
   @override
   void dispose() {
-    if (widget.ownsRouter) {
-      widget.router.dispose();
+    if (_ownsRouter) {
+      _router.dispose();
     }
     super.dispose();
   }
@@ -52,7 +82,7 @@ class _GuoguoAppState extends State<GuoguoApp> {
         theme: widget.theme ?? CinemaTheme.dark(),
         darkTheme: widget.theme ?? CinemaTheme.dark(),
         themeMode: ThemeMode.dark,
-        routerConfig: widget.router,
+        routerConfig: _router,
         builder: (context, child) {
           Widget result = AccessibilityPreferencesScope(
             reduceTransparency: snapshot.data ?? false,
