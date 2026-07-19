@@ -105,6 +105,9 @@ jobs:
       - name: Diagnose Task 2 app shell tests
         run: flutter test --reporter expanded --timeout 30s test/app/app_shell_test.dart
 
+      - name: Run committed unit and widget tests
+        run: flutter test
+
       - name: Pre-cache iOS engine artifacts
         run: |
           "$FLUTTER_SDK_DIRECTORY/bin/flutter" precache --ios
