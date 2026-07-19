@@ -3,6 +3,8 @@ set -euo pipefail
 
 readonly repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 readonly generator="$repository_root/tool/generate_task1_ci.sh"
+readonly committed_main="$repository_root/lib/main.dart"
+readonly committed_test="$repository_root/test/widget_test.dart"
 readonly main_template="$repository_root/tool/task1_templates/main.dart"
 readonly test_template="$repository_root/tool/task1_templates/widget_test.dart"
 readonly workflow="$repository_root/.github/workflows/ios.yml"
@@ -18,6 +20,8 @@ require_file() {
 }
 
 require_file "$generator"
+require_file "$committed_main"
+require_file "$committed_test"
 require_file "$main_template"
 require_file "$test_template"
 require_file "$workflow"
@@ -69,10 +73,76 @@ trigger_paths() {
 test -n "$(trigger_paths pull_request)"
 diff -u <(trigger_paths push) <(trigger_paths pull_request)
 
-test "$(grep -c 'NavigationDestination(' "$main_template")" -eq 4
-grep -Fq 'class GuoguoApp extends StatelessWidget' "$main_template"
-grep -Fq 'await tester.pumpWidget(const GuoguoApp());' "$test_template"
-grep -Fq 'findsNWidgets(4)' "$test_template"
+for required_path in \
+  'lib/**' 'test/**' pubspec.yaml pubspec.lock analysis_options.yaml 'ios/**'; do
+  if ! trigger_paths push | grep -Fxq "$required_path"; then
+    echo "Workflow triggers must include committed project input: $required_path" >&2
+    exit 1
+  fi
+done
+
+workflow_step() {
+  local step_name="$1"
+  awk -v heading="      - name: $step_name" '
+    $0 == heading { in_step = 1 }
+    in_step && $0 != heading && /^      - name: / { exit }
+    in_step { print }
+  ' "$workflow"
+}
+
+for committed_step in \
+  'Resolve committed project dependencies' \
+  'Check committed Dart formatting' \
+  'Analyze committed Flutter sources' \
+  'Run committed unit and widget tests' \
+  'Install committed CocoaPods dependencies' \
+  'Build committed unsigned iOS simulator app'; do
+  step_definition="$(workflow_step "$committed_step")"
+  if [[ -z "$step_definition" ]]; then
+    echo "Workflow is missing committed-project step: $committed_step" >&2
+    exit 1
+  fi
+  if grep -Fq 'runner.temp' <<<"$step_definition"; then
+    echo "Committed-project step must run in the checkout: $committed_step" >&2
+    exit 1
+  fi
+done
+
+workflow_step 'Resolve committed project dependencies' | grep -Fq 'run: flutter pub get'
+workflow_step 'Check committed Dart formatting' | grep -Fq 'run: dart format --output=none --set-exit-if-changed lib test'
+workflow_step 'Analyze committed Flutter sources' | grep -Fq 'run: flutter analyze'
+workflow_step 'Run committed unit and widget tests' | grep -Fq 'run: flutter test'
+workflow_step 'Install committed CocoaPods dependencies' | grep -Fq 'working-directory: ios'
+workflow_step 'Install committed CocoaPods dependencies' | grep -Fq 'run: pod install'
+workflow_step 'Build committed unsigned iOS simulator app' | grep -Fq 'run: flutter build ios --simulator --no-codesign'
+grep -Fq -- '- name: Verify bootstrap contracts' "$workflow"
+grep -Fq -- '- name: Generate project and prove smoke-test RED' "$workflow"
+
+readonly expected_navigation_labels=$'频道\n搜索\n收藏\n我的'
+
+navigation_labels() {
+  sed -n -E "s/.*label: '([^']+)'.*/\\1/p" "$1"
+}
+
+for main_source in "$committed_main" "$main_template"; do
+  test "$(grep -c 'NavigationDestination(' "$main_source")" -eq 4
+  grep -Fq 'class GuoguoApp extends StatelessWidget' "$main_source"
+  if ! grep -Fq 'selectedIndex: 0' "$main_source"; then
+    echo "Navigation must explicitly default to index 0: $main_source" >&2
+    exit 1
+  fi
+  if [[ "$(navigation_labels "$main_source")" != "$expected_navigation_labels" ]]; then
+    echo "Navigation labels must be 频道, 搜索, 收藏, 我的 in order: $main_source" >&2
+    exit 1
+  fi
+done
+
+for widget_test in "$committed_test" "$test_template"; do
+  grep -Fq 'await tester.pumpWidget(const GuoguoApp());' "$widget_test"
+  grep -Fq 'findsNWidgets(4)' "$widget_test"
+  grep -Fq "orderedEquals(['频道', '搜索', '收藏', '我的'])" "$widget_test"
+  grep -Fq 'expect(navigationBar.selectedIndex, 0);' "$widget_test"
+done
 
 grep -Fq 'com.example.dongmangongheguo' "$generator"
 grep -Fq "platform :ios, '15.0'" "$generator"

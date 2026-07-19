@@ -7,6 +7,12 @@ on:
       - .fvmrc
       - .github/workflows/ios.yml
       - .gitignore
+      - lib/**
+      - test/**
+      - pubspec.yaml
+      - pubspec.lock
+      - analysis_options.yaml
+      - ios/**
       - tool/bootstrap_flutter.sh
       - tool/bootstrap_flutter_test.sh
       - tool/generate_task1_ci.sh
@@ -17,6 +23,12 @@ on:
       - .fvmrc
       - .github/workflows/ios.yml
       - .gitignore
+      - lib/**
+      - test/**
+      - pubspec.yaml
+      - pubspec.lock
+      - analysis_options.yaml
+      - ios/**
       - tool/bootstrap_flutter.sh
       - tool/bootstrap_flutter_test.sh
       - tool/generate_task1_ci.sh
@@ -81,30 +93,29 @@ jobs:
         shell: bash
         run: bash tool/generate_task1_ci.sh "$FLUTTER_SDK_DIRECTORY" "$PROJECT_DIRECTORY"
 
-      - name: Check Dart formatting
-        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+      - name: Resolve committed project dependencies
+        run: flutter pub get
+
+      - name: Check committed Dart formatting
         run: dart format --output=none --set-exit-if-changed lib test
 
-      - name: Analyze Flutter sources
-        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+      - name: Analyze committed Flutter sources
         run: flutter analyze
 
-      - name: Run unit and widget tests
-        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+      - name: Run committed unit and widget tests
         run: flutter test
 
       - name: Pre-cache iOS engine artifacts
         run: |
           "$FLUTTER_SDK_DIRECTORY/bin/flutter" precache --ios
 
-      - name: Install CocoaPods dependencies
-        working-directory: ${{ runner.temp }}/guoguo-task1-generated/ios
+      - name: Install committed CocoaPods dependencies
+        working-directory: ios
         env:
           LANG: en_US.UTF-8
         run: pod install
 
-      - name: Build unsigned iOS simulator app
-        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+      - name: Build committed unsigned iOS simulator app
         run: flutter build ios --simulator --no-codesign
 
       - name: Upload generated project
