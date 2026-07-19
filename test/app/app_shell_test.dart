@@ -37,10 +37,6 @@ void main() {
   ) async {
     final router = createTestRouter();
     addTearDown(router.dispose);
-    final errors = <FlutterErrorDetails>[];
-    final previousHandler = FlutterError.onError;
-    FlutterError.onError = errors.add;
-    addTearDown(() => FlutterError.onError = previousHandler);
 
     await tester.pumpWidget(
       MediaQuery(
@@ -59,12 +55,12 @@ void main() {
     );
     await tester.pump();
     await tester.pump();
+    expect(tester.takeException(), isNull);
 
     expect(find.text('频道'), findsWidgets);
     expect(find.text('搜索'), findsOneWidget);
     expect(find.text('收藏'), findsOneWidget);
     expect(find.text('我的'), findsOneWidget);
-    expect(errors, isEmpty);
 
     final reducedNavigationBar = tester.widget<NavigationBar>(
       find.byType(NavigationBar),
@@ -96,6 +92,7 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 180));
+    expect(tester.takeException(), isNull);
     expect(router.routeInformationProvider.value.uri.path, '/search');
 
     final searchTarget = tester.getSize(
