@@ -7,6 +7,7 @@ readonly main_template="$repository_root/tool/task1_templates/main.dart"
 readonly test_template="$repository_root/tool/task1_templates/widget_test.dart"
 readonly workflow="$repository_root/.github/workflows/ios.yml"
 readonly flutter_revision="ee80f08bbf97172ec030b8751ceab557177a34a6"
+readonly flutter_version="3.44.6"
 
 require_file() {
   local path="$1"
@@ -22,8 +23,22 @@ require_file "$test_template"
 require_file "$workflow"
 
 test "$(git -C "$repository_root/.tooling/flutter" rev-parse HEAD 2>/dev/null || true)" = "$flutter_revision"
+git -C "$repository_root/.tooling/flutter" tag --points-at HEAD | grep -Fxq "$flutter_version"
 grep -Fqx "{\"flutterSdkVersion\":\"$flutter_revision\"}" "$repository_root/.fvmrc"
 grep -Fq "FLUTTER_REVISION: $flutter_revision" "$workflow"
+
+if ! grep -Fq "FLUTTER_VERSION: $flutter_version" "$workflow"; then
+  echo "Workflow must fetch Flutter tag $flutter_version for version metadata." >&2
+  exit 1
+fi
+
+grep -Fq 'fetch --depth=1 origin "refs/tags/$FLUTTER_VERSION:refs/tags/$FLUTTER_VERSION"' "$workflow"
+grep -Fq 'checkout --detach "refs/tags/$FLUTTER_VERSION"' "$workflow"
+grep -Fq 'test "$(git -C "$FLUTTER_SDK_DIRECTORY" rev-parse HEAD)" = "$FLUTTER_REVISION"' "$workflow"
+grep -Fq 'test "$(git -C "$FLUTTER_SDK_DIRECTORY" describe --tags --exact-match HEAD)" = "$FLUTTER_VERSION"' "$workflow"
+grep -Fq "readonly flutter_version=\"$flutter_version\"" "$repository_root/tool/bootstrap_flutter.sh"
+grep -Fq 'fetch --depth=1 origin "refs/tags/$flutter_version:refs/tags/$flutter_version"' "$repository_root/tool/bootstrap_flutter.sh"
+grep -Fq 'checkout --detach "refs/tags/$flutter_version"' "$repository_root/tool/bootstrap_flutter.sh"
 
 job_environment() {
   awk '
