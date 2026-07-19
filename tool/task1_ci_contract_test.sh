@@ -88,6 +88,15 @@ for dependency in mocktail drift_dev build_runner pigeon golden_toolkit; do
   grep -Fq " $dependency" "$generator"
 done
 
+precache_line="$(grep -nF '"$FLUTTER_SDK_DIRECTORY/bin/flutter" precache --ios' "$workflow" | cut -d: -f1 || true)"
+pod_install_line="$(grep -nF 'run: pod install' "$workflow" | cut -d: -f1 || true)"
+if [[ -z "$precache_line" ]]; then
+  echo 'Workflow must pre-cache pinned iOS engine artifacts.' >&2
+  exit 1
+fi
+test -n "$pod_install_line"
+test "$precache_line" -lt "$pod_install_line"
+
 if grep -E '^[[:space:]]+uses:' "$workflow" | grep -Ev 'actions/(checkout|upload-artifact)@'; then
   echo 'Workflow references a non-official action.' >&2
   exit 1
