@@ -23,9 +23,9 @@ void main() {
       find.byType(NavigationBar),
     );
     expect(
-      navigationBar.destinations
-          .cast<NavigationDestination>()
-          .map((destination) => destination.label),
+      navigationBar.destinations.cast<NavigationDestination>().map(
+        (destination) => destination.label,
+      ),
       orderedEquals(['频道', '搜索', '收藏', '我的']),
     );
     expect(navigationBar.selectedIndex, 0);
@@ -63,9 +63,7 @@ void main() {
     expect(find.text('收藏'), findsOneWidget);
     expect(find.text('我的'), findsOneWidget);
     expect(
-      errors.where(
-        (error) => error.exceptionAsString().contains('overflow'),
-      ),
+      errors.where((error) => error.exceptionAsString().contains('overflow')),
       isEmpty,
     );
 
