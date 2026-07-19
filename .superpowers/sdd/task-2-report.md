@@ -80,6 +80,25 @@ with `const` in `lib/main.dart` and the Task 1 generated-test template. Both
 call sites were corrected without changing behavior, and the Task 1 contract
 was updated to match the still-valid non-const smoke-test construction.
 
+## Remote GREEN iteration 2
+
+GitHub macOS run `29706748970` passed committed formatting, `flutter analyze`,
+golden generation, all 10 tests, iOS engine precache, and CocoaPods. The
+simulator build then identified one Swift type-safety issue: on pinned Flutter
+3.44.6, `registrar(forPlugin:)` returns an optional. `AppDelegate` now unwraps
+it with `guard let`, records a debug assertion if unavailable, and preserves
+normal generated plugin registration before registering the accessibility
+EventChannel.
+
+## Golden typography correction
+
+The first macOS-generated 390x844 images used Flutter's Ahem test font, which
+intentionally has no Chinese glyphs and rendered the four labels as tofu
+squares. Those images were rejected rather than committed. The committed CI
+test step now runs `flutter test --no-test-fonts`, allowing macOS/iOS system
+font fallback to render `频道`, `搜索`, `收藏`, and `我的` for meaningful visual
+inspection. The Task 1 workflow contract asserts this flag remains enabled.
+
 ## Local runner constraint
 
 The pinned Flutter SDK remains checked out at
