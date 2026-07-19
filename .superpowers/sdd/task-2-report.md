@@ -110,6 +110,15 @@ finding was an unnecessary explicit `dart:typed_data` import because
 `flutter/services.dart` already exports `ByteData`. The redundant import was
 removed without changing the font-loading behavior.
 
+GitHub macOS run `29707166898` then passed analyze, all tests, CocoaPods, and
+the unsigned simulator build. Visual inspection confirmed Chinese labels were
+correct and unclipped at both 100% and 200%, but Flutter's test font still
+replaced Material icons with tofu squares. The golden setup now also loads
+`MaterialIcons-Regular.otf` into the exact `MaterialIcons` family. It locates
+the pinned SDK from `FLUTTER_ROOT`, `Platform.resolvedExecutable`, or the local
+`.tooling/flutter` checkout, and fails explicitly if the deterministic asset
+is unavailable. The otherwise-green tofu-icon images were not committed.
+
 ## Local runner constraint
 
 The pinned Flutter SDK remains checked out at
