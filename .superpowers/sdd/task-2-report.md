@@ -94,10 +94,16 @@ EventChannel.
 
 The first macOS-generated 390x844 images used Flutter's Ahem test font, which
 intentionally has no Chinese glyphs and rendered the four labels as tofu
-squares. Those images were rejected rather than committed. The committed CI
-test step now runs `flutter test --no-test-fonts`, allowing macOS/iOS system
-font fallback to render `频道`, `搜索`, `收藏`, and `我的` for meaningful visual
-inspection. The Task 1 workflow contract asserts this flag remains enabled.
+squares. Those images were rejected rather than committed. Flutter 3.44.6 then
+rejected the attempted `--no-test-fonts` flag in run `29706932205` with exit
+64, so the workflow remains on the supported plain `flutter test` command.
+
+The golden test now loads PingFang from macOS using `FontLoader` under a stable
+test-only family name (with two macOS CJK fallback paths). `CinemaTheme.dark`
+accepts an optional font family and `GuoguoApp` accepts an optional `ThemeData`
+for deterministic test injection. Production passes neither and therefore
+continues to use native system typography. Only golden tests override Ahem;
+ordinary widget tests remain platform-independent.
 
 ## Local runner constraint
 
