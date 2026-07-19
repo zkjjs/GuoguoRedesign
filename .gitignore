@@ -1,0 +1,9 @@
+.superpowers/
+.dart_tool/
+.idea/
+.packages
+build/
+ios/Pods/
+ios/.symlinks/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
