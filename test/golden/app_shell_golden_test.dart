@@ -1,8 +1,21 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guoguo/app/app.dart';
+import 'package:guoguo/core/theme/cinema_theme.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  late String goldenFontFamily;
+
+  setUpAll(() async {
+    goldenFontFamily = await loadMacOsCjkGoldenFont();
+  });
+
   Future<void> setPhoneSurface(WidgetTester tester) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -19,6 +32,7 @@ void main() {
         child: GuoguoApp(
           router: router,
           reduceTransparencyChanges: const Stream<bool>.empty(),
+          theme: CinemaTheme.dark(fontFamily: goldenFontFamily),
         ),
       ),
     );
@@ -49,6 +63,7 @@ void main() {
           child: GuoguoApp(
             router: router,
             reduceTransparencyChanges: Stream<bool>.value(true),
+            theme: CinemaTheme.dark(fontFamily: goldenFontFamily),
           ),
         ),
       ),
@@ -60,4 +75,31 @@ void main() {
       matchesGoldenFile('app_shell_accessible.png'),
     );
   });
+}
+
+Future<String> loadMacOsCjkGoldenFont() async {
+  const family = 'GuoguoGoldenCJK';
+  const candidates = [
+    '/System/Library/Fonts/PingFang.ttc',
+    '/System/Library/Fonts/STHeiti Medium.ttc',
+    '/System/Library/Fonts/Supplemental/Songti.ttc',
+  ];
+
+  for (final path in candidates) {
+    final file = File(path);
+    if (!file.existsSync()) {
+      continue;
+    }
+
+    final loader = FontLoader(family);
+    loader.addFont(
+      file.readAsBytes().then((bytes) => ByteData.sublistView(bytes)),
+    );
+    await loader.load();
+    return family;
+  }
+
+  throw StateError(
+    'A deterministic macOS CJK font is required for shell goldens.',
+  );
 }
