@@ -93,6 +93,10 @@ jobs:
         working-directory: ${{ runner.temp }}/guoguo-task1-generated
         run: flutter test
 
+      - name: Pre-cache iOS engine artifacts
+        run: |
+          "$FLUTTER_SDK_DIRECTORY/bin/flutter" precache --ios
+
       - name: Install CocoaPods dependencies
         working-directory: ${{ runner.temp }}/guoguo-task1-generated/ios
         env:
