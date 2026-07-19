@@ -13,6 +13,7 @@ class GuoguoApp extends StatefulWidget {
   GuoguoApp({
     GoRouter? router,
     Stream<bool>? reduceTransparencyChanges,
+    this.theme,
     super.key,
   }) : router = router ?? createAppRouter(),
        ownsRouter = router == null,
@@ -23,6 +24,7 @@ class GuoguoApp extends StatefulWidget {
   final GoRouter router;
   final bool ownsRouter;
   final Stream<bool> reduceTransparencyChanges;
+  final ThemeData? theme;
 
   @override
   State<GuoguoApp> createState() => _GuoguoAppState();
@@ -47,8 +49,8 @@ class _GuoguoAppState extends State<GuoguoApp> {
       builder: (context, snapshot) => MaterialApp.router(
         title: '果果',
         debugShowCheckedModeBanner: false,
-        theme: CinemaTheme.dark(),
-        darkTheme: CinemaTheme.dark(),
+        theme: widget.theme ?? CinemaTheme.dark(),
+        darkTheme: widget.theme ?? CinemaTheme.dark(),
         themeMode: ThemeMode.dark,
         routerConfig: widget.router,
         builder: (context, child) {
