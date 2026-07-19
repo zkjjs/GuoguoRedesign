@@ -141,13 +141,13 @@ void main() {
     tester,
   ) async {
     var factoryCalls = 0;
-    late TrackingGoRouter first;
-    late TrackingGoRouter second;
+    late GoRouter first;
+    late GoRouter second;
 
     final initialApp = GuoguoApp(
       routerFactory: () {
         factoryCalls += 1;
-        first = TrackingGoRouter();
+        first = createLifecycleRouter();
         return first;
       },
       reduceTransparencyChanges: const Stream<bool>.empty(),
@@ -156,43 +156,39 @@ void main() {
 
     await tester.pumpWidget(initialApp);
     expect(factoryCalls, 1);
-    expect(first.wasDisposed, isFalse);
+    expect(ChangeNotifier.debugAssertNotDisposed(first.routerDelegate), isTrue);
 
     await tester.pumpWidget(
       GuoguoApp(
         routerFactory: () {
           factoryCalls += 1;
-          second = TrackingGoRouter();
+          second = createLifecycleRouter();
           return second;
         },
         reduceTransparencyChanges: const Stream<bool>.empty(),
       ),
     );
     expect(factoryCalls, 2);
-    expect(first.wasDisposed, isTrue);
-    expect(second.wasDisposed, isFalse);
+    expect(
+      () => ChangeNotifier.debugAssertNotDisposed(first.routerDelegate),
+      throwsFlutterError,
+    );
+    expect(
+      ChangeNotifier.debugAssertNotDisposed(second.routerDelegate),
+      isTrue,
+    );
 
     await tester.pumpWidget(const SizedBox());
-    expect(second.wasDisposed, isTrue);
+    expect(
+      () => ChangeNotifier.debugAssertNotDisposed(second.routerDelegate),
+      throwsFlutterError,
+    );
   });
 }
 
 GoRouter createTestRouter() => createAppRouter();
 
-final class TrackingGoRouter extends GoRouter {
-  TrackingGoRouter()
-    : super(
-        initialLocation: '/',
-        routes: [
-          GoRoute(path: '/', builder: (context, state) => const SizedBox()),
-        ],
-      );
-
-  bool wasDisposed = false;
-
-  @override
-  void dispose() {
-    wasDisposed = true;
-    super.dispose();
-  }
-}
+GoRouter createLifecycleRouter() => GoRouter(
+  initialLocation: '/',
+  routes: [GoRoute(path: '/', builder: (context, state) => const SizedBox())],
+);
