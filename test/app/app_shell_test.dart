@@ -16,7 +16,8 @@ void main() {
         reduceTransparencyChanges: const Stream<bool>.empty(),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
 
     expect(router.routeInformationProvider.value.uri.path, '/channel');
     final navigationBar = tester.widget<NavigationBar>(
@@ -56,7 +57,8 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
 
     expect(find.text('频道'), findsWidgets);
     expect(find.text('搜索'), findsOneWidget);
@@ -92,6 +94,7 @@ void main() {
       findsNothing,
     );
 
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 180));
     expect(router.routeInformationProvider.value.uri.path, '/search');
 
@@ -131,7 +134,7 @@ void main() {
         ],
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(find.byType(NavigationBar), findsNWidgets(2));
     expect(tester.takeException(), isNull);
