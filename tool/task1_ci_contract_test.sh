@@ -25,6 +25,19 @@ test "$(git -C "$repository_root/.tooling/flutter" rev-parse HEAD 2>/dev/null ||
 grep -Fqx "{\"flutterSdkVersion\":\"$flutter_revision\"}" "$repository_root/.fvmrc"
 grep -Fq "FLUTTER_REVISION: $flutter_revision" "$workflow"
 
+trigger_paths() {
+  local trigger="$1"
+  awk -v trigger="$trigger" '
+    $0 == "  " trigger ":" { in_trigger = 1; next }
+    in_trigger && $0 == "    paths:" { in_paths = 1; next }
+    in_paths && $0 ~ /^      - / { sub(/^      - /, ""); print; next }
+    in_paths { exit }
+  ' "$workflow"
+}
+
+test -n "$(trigger_paths pull_request)"
+diff -u <(trigger_paths push) <(trigger_paths pull_request)
+
 test "$(grep -c 'NavigationDestination(' "$main_template")" -eq 4
 grep -Fq 'class GuoguoApp extends StatelessWidget' "$main_template"
 grep -Fq 'await tester.pumpWidget(const GuoguoApp());' "$test_template"
