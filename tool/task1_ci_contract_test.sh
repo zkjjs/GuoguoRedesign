@@ -138,7 +138,7 @@ test "$(navigation_labels "$main_template")" = "$expected_navigation_labels"
 test "$(grep -c 'NavigationDestination(' "$committed_navigation")" -eq 4
 grep -Fq 'class GuoguoApp extends StatefulWidget' "$committed_app"
 grep -Fq "initialLocation: '/channel'" "$committed_router"
-grep -Fq 'selectedIndex: navigationShell.currentIndex' "$committed_navigation"
+grep -Eq 'selectedIndex: (widget\.)?navigationShell.currentIndex' "$committed_navigation"
 if [[ "$(navigation_labels "$committed_navigation")" != "$expected_navigation_labels" ]]; then
   echo "Navigation labels must be 频道, 搜索, 收藏, 我的 in order: $committed_navigation" >&2
   exit 1
