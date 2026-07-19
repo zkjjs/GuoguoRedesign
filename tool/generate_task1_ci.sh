@@ -60,7 +60,7 @@ test "$(grep -c 'PRODUCT_BUNDLE_IDENTIFIER = com.example.dongmangongheguo.Runner
 test "$(grep -c 'IPHONEOS_DEPLOYMENT_TARGET = 15.0;' ios/Runner.xcodeproj/project.pbxproj)" -eq 3
 grep -Fqx "platform :ios, '15.0'" ios/Podfile
 
-"$flutter" pub add flutter_riverpod go_router dio flutter_secure_storage drift sqlite3_flutter_libs path_provider cached_network_image connectivity_plus share_plus collection
+"$flutter" pub add flutter_riverpod go_router dio flutter_secure_storage drift sqlite3_flutter_libs path_provider cached_network_image connectivity_plus@6.1.5 share_plus collection
 "$flutter" pub add --dev mocktail drift_dev build_runner pigeon golden_toolkit
 
 cp "$repository_root/tool/task1_templates/widget_test.dart" test/widget_test.dart
