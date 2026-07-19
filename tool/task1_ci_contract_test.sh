@@ -77,6 +77,11 @@ grep -Fq 'findsNWidgets(4)' "$test_template"
 grep -Fq 'com.example.dongmangongheguo' "$generator"
 grep -Fq "platform :ios, '15.0'" "$generator"
 
+if ! grep -Eq 'pub add .* connectivity_plus@6\.1\.5( |$)' "$generator"; then
+  echo 'Generator must pin connectivity_plus exactly to Xcode-compatible 6.1.5.' >&2
+  exit 1
+fi
+
 for dependency in \
   flutter_riverpod go_router dio flutter_secure_storage drift \
   sqlite3_flutter_libs path_provider cached_network_image connectivity_plus \
