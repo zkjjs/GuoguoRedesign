@@ -13,6 +13,7 @@ void main() {
 
   setUpAll(() async {
     goldenFontFamily = await loadMacOsCjkGoldenFont();
+    await loadMaterialIconsGoldenFont();
   });
 
   Future<void> setPhoneSurface(WidgetTester tester) async {
@@ -100,5 +101,37 @@ Future<String> loadMacOsCjkGoldenFont() async {
 
   throw StateError(
     'A deterministic macOS CJK font is required for shell goldens.',
+  );
+}
+
+Future<void> loadMaterialIconsGoldenFont() async {
+  final executable = File(Platform.resolvedExecutable);
+  final derivedFlutterRoot = executable.parent.parent.parent.parent.parent.path;
+  final configuredFlutterRoot = Platform.environment['FLUTTER_ROOT'];
+  final roots = <String>{
+    if (configuredFlutterRoot != null && configuredFlutterRoot.isNotEmpty)
+      configuredFlutterRoot,
+    derivedFlutterRoot,
+    '${Directory.current.path}/.tooling/flutter',
+  };
+
+  for (final root in roots) {
+    final file = File(
+      '$root/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+    );
+    if (!file.existsSync()) {
+      continue;
+    }
+
+    final loader = FontLoader('MaterialIcons');
+    loader.addFont(
+      file.readAsBytes().then((bytes) => ByteData.sublistView(bytes)),
+    );
+    await loader.load();
+    return;
+  }
+
+  throw StateError(
+    'Pinned Flutter MaterialIcons-Regular.otf is required for shell goldens.',
   );
 }
