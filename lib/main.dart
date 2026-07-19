@@ -5,5 +5,5 @@ import 'app/app.dart';
 export 'app/app.dart' show GuoguoApp;
 
 void main() {
-  runApp(const GuoguoApp());
+  runApp(GuoguoApp());
 }
