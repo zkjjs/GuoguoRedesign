@@ -102,11 +102,11 @@ jobs:
       - name: Analyze committed Flutter sources
         run: flutter analyze
 
-      - name: Generate Task 2 golden baselines with system fonts
-        run: flutter test --no-test-fonts --update-goldens test/golden/app_shell_golden_test.dart
+      - name: Generate Task 2 golden baselines with loaded CJK font
+        run: flutter test --update-goldens test/golden/app_shell_golden_test.dart
 
       - name: Run committed unit and widget tests
-        run: flutter test --no-test-fonts
+        run: flutter test
 
       - name: Pre-cache iOS engine artifacts
         run: |
@@ -121,11 +121,11 @@ jobs:
       - name: Build committed unsigned iOS simulator app
         run: flutter build ios --simulator --no-codesign
 
-      - name: Upload Task 2 golden baselines
+      - name: Upload Task 2 CJK golden baselines
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: guoguo-task2-system-font-goldens
+          name: guoguo-task2-cjk-goldens
           path: test/golden/*.png
           if-no-files-found: error
           retention-days: 7
