@@ -173,6 +173,12 @@ The lifecycle test now uses real `GoRouter` instances and Flutter's supported
 true while owned, and throws `FlutterError` after replacement and unmount.
 Factory-call counts continue to prove lazy construction.
 
+GitHub macOS run `29708102107` passed analyze but exposed an unbounded settle in
+the new review tests. The two-router coexistence test now uses one explicit
+bounded pump instead of `pumpAndSettle`. The reduced-motion test uses bounded
+initial pumps, then explicitly builds the post-frame opacity target and advances
+the full 180ms animation so no transient callback or animation remains pending.
+
 ## Local runner constraint
 
 The pinned Flutter SDK remains checked out at
