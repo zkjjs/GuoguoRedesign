@@ -62,12 +62,36 @@ void main() {
     expect(find.text('搜索'), findsOneWidget);
     expect(find.text('收藏'), findsOneWidget);
     expect(find.text('我的'), findsOneWidget);
-    expect(
-      errors.where((error) => error.exceptionAsString().contains('overflow')),
-      isEmpty,
+    expect(errors, isEmpty);
+
+    final reducedNavigationBar = tester.widget<NavigationBar>(
+      find.byType(NavigationBar),
     );
+    expect(reducedNavigationBar.animationDuration, Duration.zero);
 
     await tester.tap(find.text('搜索'));
+    await tester.pump();
+
+    final fade = tester.widget<AnimatedOpacity>(
+      find.byKey(const Key('reducedMotionBranchFade')),
+    );
+    expect(fade.duration, const Duration(milliseconds: 180));
+    expect(fade.opacity, 0);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('reducedMotionBranchFade')),
+        matching: find.byType(SlideTransition),
+      ),
+      findsNothing,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('reducedMotionBranchFade')),
+        matching: find.byType(ScaleTransition),
+      ),
+      findsNothing,
+    );
+
     await tester.pump(const Duration(milliseconds: 180));
     expect(router.routeInformationProvider.value.uri.path, '/search');
 
@@ -79,6 +103,96 @@ void main() {
     expect(searchTarget.width, greaterThanOrEqualTo(44));
     expect(searchTarget.height, greaterThanOrEqualTo(44));
   });
+
+  testWidgets('two app routers can coexist without sharing navigator keys', (
+    tester,
+  ) async {
+    final first = createAppRouter();
+    final second = createAppRouter();
+    addTearDown(first.dispose);
+    addTearDown(second.dispose);
+
+    await tester.pumpWidget(
+      Row(
+        textDirection: TextDirection.ltr,
+        children: [
+          Expanded(
+            child: GuoguoApp(
+              router: first,
+              reduceTransparencyChanges: const Stream<bool>.empty(),
+            ),
+          ),
+          Expanded(
+            child: GuoguoApp(
+              router: second,
+              reduceTransparencyChanges: const Stream<bool>.empty(),
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(NavigationBar), findsNWidgets(2));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('owned router is created lazily and disposed when replaced', (
+    tester,
+  ) async {
+    var factoryCalls = 0;
+    late TrackingGoRouter first;
+    late TrackingGoRouter second;
+
+    final initialApp = GuoguoApp(
+      routerFactory: () {
+        factoryCalls += 1;
+        first = TrackingGoRouter();
+        return first;
+      },
+      reduceTransparencyChanges: const Stream<bool>.empty(),
+    );
+    expect(factoryCalls, 0);
+
+    await tester.pumpWidget(initialApp);
+    expect(factoryCalls, 1);
+    expect(first.wasDisposed, isFalse);
+
+    await tester.pumpWidget(
+      GuoguoApp(
+        routerFactory: () {
+          factoryCalls += 1;
+          second = TrackingGoRouter();
+          return second;
+        },
+        reduceTransparencyChanges: const Stream<bool>.empty(),
+      ),
+    );
+    expect(factoryCalls, 2);
+    expect(first.wasDisposed, isTrue);
+    expect(second.wasDisposed, isFalse);
+
+    await tester.pumpWidget(const SizedBox());
+    expect(second.wasDisposed, isTrue);
+  });
 }
 
 GoRouter createTestRouter() => createAppRouter();
+
+final class TrackingGoRouter extends GoRouter {
+  TrackingGoRouter()
+    : super(
+        initialLocation: '/',
+        routes: [
+          GoRoute(path: '/', builder: (context, state) => const SizedBox()),
+        ],
+      );
+
+  bool wasDisposed = false;
+
+  @override
+  void dispose() {
+    wasDisposed = true;
+    super.dispose();
+  }
+}
