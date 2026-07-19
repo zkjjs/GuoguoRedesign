@@ -12,9 +12,12 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    let registrar = engineBridge.pluginRegistry.registrar(
+    guard let registrar = engineBridge.pluginRegistry.registrar(
       forPlugin: "AccessibilityPreferencesPlugin"
-    )
+    ) else {
+      assertionFailure("Accessibility preferences registrar is unavailable")
+      return
+    }
     AccessibilityPreferencesPlugin.register(with: registrar)
   }
 }
