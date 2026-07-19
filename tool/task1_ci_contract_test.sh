@@ -25,6 +25,22 @@ test "$(git -C "$repository_root/.tooling/flutter" rev-parse HEAD 2>/dev/null ||
 grep -Fqx "{\"flutterSdkVersion\":\"$flutter_revision\"}" "$repository_root/.fvmrc"
 grep -Fq "FLUTTER_REVISION: $flutter_revision" "$workflow"
 
+job_environment() {
+  awk '
+    /^    env:/ { in_environment = 1; next }
+    in_environment && /^    steps:/ { exit }
+    in_environment { print }
+  ' "$workflow"
+}
+
+if job_environment | grep -Fq '${{ runner.'; then
+  echo 'Job-level env must not reference the unavailable runner context.' >&2
+  exit 1
+fi
+
+grep -Fq 'echo "FLUTTER_SDK_DIRECTORY=$RUNNER_TEMP/flutter" >> "$GITHUB_ENV"' "$workflow"
+grep -Fq 'echo "PROJECT_DIRECTORY=$RUNNER_TEMP/guoguo-task1-generated" >> "$GITHUB_ENV"' "$workflow"
+
 trigger_paths() {
   local trigger="$1"
   awk -v trigger="$trigger" '
