@@ -1,0 +1,104 @@
+name: Bootstrap Flutter iOS
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .fvmrc
+      - .github/workflows/ios.yml
+      - .gitignore
+      - tool/bootstrap_flutter.sh
+      - tool/bootstrap_flutter_test.sh
+      - tool/generate_task1_ci.sh
+      - tool/task1_ci_contract_test.sh
+      - tool/task1_templates/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: guoguo-task1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bootstrap-ios:
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      FLUTTER_REVISION: ee80f08bbf97172ec030b8751ceab557177a34a6
+      FLUTTER_SDK_DIRECTORY: ${{ runner.temp }}/flutter
+      PROJECT_DIRECTORY: ${{ runner.temp }}/guoguo-task1-generated
+    steps:
+      - name: Check out bootstrap sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Scan committed sources for secrets
+        shell: bash
+        run: |
+          if git grep -nIE '(-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36,})'; then
+            echo 'Potential committed secret detected.' >&2
+            exit 1
+          fi
+
+      - name: Install pinned Flutter outside the workspace
+        shell: bash
+        run: |
+          git init "$FLUTTER_SDK_DIRECTORY"
+          git -C "$FLUTTER_SDK_DIRECTORY" remote add origin https://github.com/flutter/flutter.git
+          git -C "$FLUTTER_SDK_DIRECTORY" fetch --depth=1 origin "$FLUTTER_REVISION"
+          git -C "$FLUTTER_SDK_DIRECTORY" checkout --detach FETCH_HEAD
+          test "$(git -C "$FLUTTER_SDK_DIRECTORY" rev-parse HEAD)" = "$FLUTTER_REVISION"
+          mkdir -p .tooling
+          ln -s "$FLUTTER_SDK_DIRECTORY" .tooling/flutter
+          bash tool/bootstrap_flutter_test.sh
+          "$FLUTTER_SDK_DIRECTORY/bin/flutter" config --no-analytics
+          "$FLUTTER_SDK_DIRECTORY/bin/flutter" doctor -v
+          echo "$FLUTTER_SDK_DIRECTORY/bin" >> "$GITHUB_PATH"
+
+      - name: Verify bootstrap contracts
+        shell: bash
+        run: bash tool/task1_ci_contract_test.sh
+
+      - name: Generate project and prove smoke-test RED
+        shell: bash
+        run: bash tool/generate_task1_ci.sh "$FLUTTER_SDK_DIRECTORY" "$PROJECT_DIRECTORY"
+
+      - name: Check Dart formatting
+        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analyze Flutter sources
+        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+        run: flutter analyze
+
+      - name: Run unit and widget tests
+        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+        run: flutter test
+
+      - name: Install CocoaPods dependencies
+        working-directory: ${{ runner.temp }}/guoguo-task1-generated/ios
+        env:
+          LANG: en_US.UTF-8
+        run: pod install
+
+      - name: Build unsigned iOS simulator app
+        working-directory: ${{ runner.temp }}/guoguo-task1-generated
+        run: flutter build ios --simulator --no-codesign
+
+      - name: Upload generated project
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: guoguo-task1-generated
+          path: |
+            ${{ runner.temp }}/guoguo-task1-generated
+            !${{ runner.temp }}/guoguo-task1-generated/.dart_tool
+            !${{ runner.temp }}/guoguo-task1-generated/build
+            !${{ runner.temp }}/guoguo-task1-generated/ios/Pods
+            !${{ runner.temp }}/guoguo-task1-generated/ios/.symlinks
+            !${{ runner.temp }}/guoguo-task1-generated/ios/Flutter/ephemeral
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
