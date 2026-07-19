@@ -21,3 +21,4 @@ void main() {
     expect(navigationBar.selectedIndex, 0);
   });
 }
+

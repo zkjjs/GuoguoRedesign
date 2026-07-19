@@ -81,3 +81,4 @@ if ! grep -Fq 'GuoguoApp' "$red_log"; then
 fi
 
 cp "$repository_root/tool/task1_templates/main.dart" lib/main.dart
+
