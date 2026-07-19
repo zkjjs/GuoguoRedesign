@@ -103,7 +103,38 @@ jobs:
         run: flutter analyze
 
       - name: Diagnose Task 2 app shell tests
-        run: flutter test --reporter expanded --timeout 30s test/app/app_shell_test.dart
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import subprocess
+
+          tests = [
+              'shell defaults to channel and renders exact Chinese labels',
+              'shell remains usable with accessibility settings at 200%',
+              'two app routers can coexist without sharing navigator keys',
+              'owned router is created lazily and disposed when replaced',
+          ]
+          for test_name in tests:
+              print(f'=== START {test_name} ===', flush=True)
+              try:
+                  subprocess.run(
+                      [
+                          'flutter',
+                          'test',
+                          '--reporter',
+                          'expanded',
+                          '--plain-name',
+                          test_name,
+                          'test/app/app_shell_test.dart',
+                      ],
+                      check=True,
+                      timeout=60,
+                  )
+              except subprocess.TimeoutExpired:
+                  print(f'=== TIMEOUT {test_name} ===', flush=True)
+                  raise
+              print(f'=== PASS {test_name} ===', flush=True)
+          PY
 
       - name: Run committed unit and widget tests
         run: flutter test
