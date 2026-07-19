@@ -36,13 +36,17 @@ jobs:
     timeout-minutes: 45
     env:
       FLUTTER_REVISION: ee80f08bbf97172ec030b8751ceab557177a34a6
-      FLUTTER_SDK_DIRECTORY: ${{ runner.temp }}/flutter
-      PROJECT_DIRECTORY: ${{ runner.temp }}/guoguo-task1-generated
     steps:
       - name: Check out bootstrap sources
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+
+      - name: Initialize runner paths
+        shell: bash
+        run: |
+          echo "FLUTTER_SDK_DIRECTORY=$RUNNER_TEMP/flutter" >> "$GITHUB_ENV"
+          echo "PROJECT_DIRECTORY=$RUNNER_TEMP/guoguo-task1-generated" >> "$GITHUB_ENV"
 
       - name: Scan committed sources for secrets
         shell: bash
