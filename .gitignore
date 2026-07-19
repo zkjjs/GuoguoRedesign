@@ -1,4 +1,5 @@
 .superpowers/
+.tooling/
 .dart_tool/
 .idea/
 .packages
