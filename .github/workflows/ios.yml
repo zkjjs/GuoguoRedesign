@@ -118,6 +118,37 @@ jobs:
       - name: Build committed unsigned iOS simulator app
         run: flutter build ios --simulator --no-codesign
 
+      - name: Build committed unsigned iOS release app
+        run: flutter build ios --release --no-codesign
+
+      - name: Package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_PATH="$GITHUB_WORKSPACE/build/ios/iphoneos/Runner.app"
+          PACKAGE_ROOT="$RUNNER_TEMP/guoguo-unsigned-ipa"
+          IPA_PATH="$GITHUB_WORKSPACE/GuoguoRedesign-unsigned.ipa"
+          test -d "$APP_PATH"
+          rm -rf "$PACKAGE_ROOT"
+          mkdir -p "$PACKAGE_ROOT/Payload"
+          ditto "$APP_PATH" "$PACKAGE_ROOT/Payload/Runner.app"
+          (
+            cd "$PACKAGE_ROOT"
+            /usr/bin/zip -qry "$IPA_PATH" Payload
+          )
+          unzip -t "$IPA_PATH"
+          shasum -a 256 "$IPA_PATH" > "$IPA_PATH.sha256"
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: guoguo-unsigned-ipa
+          path: |
+            GuoguoRedesign-unsigned.ipa
+            GuoguoRedesign-unsigned.ipa.sha256
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Upload generated project
         if: always()
         uses: actions/upload-artifact@v4
