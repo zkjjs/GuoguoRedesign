@@ -1,1 +1,1 @@
-enum ApiError implements Exception { invalidPayload }
+enum ApiError implements Exception { invalidPayload, authenticationExpired }
