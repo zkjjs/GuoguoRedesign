@@ -1,3 +1,7 @@
+// The repository keeps a stable public `api` argument while storing the
+// adapter privately.
+// ignore_for_file: prefer_initializing_formals
+
 import 'dart:async';
 
 import '../domain/playback_repository.dart';

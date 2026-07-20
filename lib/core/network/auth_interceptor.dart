@@ -1,3 +1,7 @@
+// The constructor intentionally exposes stable public argument names while
+// storing collaborators in private fields.
+// ignore_for_file: prefer_initializing_formals
+
 import 'package:dio/dio.dart';
 
 import '../auth/auth_session.dart';
@@ -56,38 +60,38 @@ final class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException error, ErrorInterceptorHandler handler) async {
-    if (error.response?.statusCode != 401) {
-      handler.next(error);
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode != 401) {
+      handler.next(err);
       return;
     }
 
-    if (error.requestOptions.extra[skipAuthRefreshKey] == true) {
-      handler.next(error);
+    if (err.requestOptions.extra[skipAuthRefreshKey] == true) {
+      handler.next(err);
       return;
     }
 
-    if (error.requestOptions.extra[_retryKey] == true) {
-      final rejected = _generationFor(error.requestOptions);
+    if (err.requestOptions.extra[_retryKey] == true) {
+      final rejected = _generationFor(err.requestOptions);
       _expire(rejected?.id);
       await _clearBestEffort(rejected?.token);
-      handler.reject(_authenticationExpired(error));
+      handler.reject(_authenticationExpired(err));
       return;
     }
 
     late final _AuthGeneration generation;
-    final requestGeneration = _generationIdFor(error.requestOptions);
+    final requestGeneration = _generationIdFor(err.requestOptions);
     try {
       final storedToken = _normalize(await _tokenStore.readUserToken());
       final current = _synchronize(storedToken);
       if (current.expired) {
         await _clearBestEffort(current.token);
-        handler.reject(_authenticationExpired(error));
+        handler.reject(_authenticationExpired(err));
         return;
       }
       if (requestGeneration != null && requestGeneration != current.id) {
         if (current.token == null) {
-          handler.reject(_authenticationExpired(error));
+          handler.reject(_authenticationExpired(err));
           return;
         }
         generation = current;
@@ -98,7 +102,7 @@ final class AuthInterceptor extends Interceptor {
       final rejected = _generation;
       _expire(rejected?.id);
       await _clearBestEffort(rejected?.token);
-      handler.reject(_authenticationExpired(error));
+      handler.reject(_authenticationExpired(err));
       return;
     } on DioException catch (transientError) {
       handler.reject(transientError);
@@ -106,7 +110,7 @@ final class AuthInterceptor extends Interceptor {
     } catch (transientError, stackTrace) {
       handler.reject(
         DioException(
-          requestOptions: error.requestOptions,
+          requestOptions: err.requestOptions,
           error: transientError,
           stackTrace: stackTrace,
         ),
@@ -115,7 +119,7 @@ final class AuthInterceptor extends Interceptor {
     }
 
     try {
-      await _replay(error, generation, handler);
+      await _replay(err, generation, handler);
     } on DioException catch (replayError) {
       if (replayError.error == ApiError.authenticationExpired ||
           replayError.response?.statusCode == 401) {
@@ -128,7 +132,7 @@ final class AuthInterceptor extends Interceptor {
     } catch (replayError, stackTrace) {
       handler.reject(
         DioException(
-          requestOptions: error.requestOptions,
+          requestOptions: err.requestOptions,
           error: replayError,
           stackTrace: stackTrace,
         ),

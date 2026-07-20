@@ -1,3 +1,7 @@
+// Public constructor argument names are intentionally mapped to private
+// storage so the capture sink cannot be exposed as mutable API state.
+// ignore_for_file: prefer_initializing_formals
+
 import '../domain/playback_request.dart';
 
 abstract interface class PlaybackApi {
