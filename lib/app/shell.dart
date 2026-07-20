@@ -16,12 +16,18 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _contentOpacity = AnimationController(
-    vsync: this,
-    value: 1,
-    duration: const Duration(milliseconds: 180),
-    animationBehavior: AnimationBehavior.preserve,
-  );
+  late final AnimationController _contentOpacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _contentOpacity = AnimationController(
+      vsync: this,
+      value: 1,
+      duration: const Duration(milliseconds: 180),
+      animationBehavior: AnimationBehavior.preserve,
+    );
+  }
 
   @override
   void dispose() {
