@@ -40,3 +40,4 @@ fi
 
 "$sdk_directory/bin/flutter" doctor -v
 "$sdk_directory/bin/flutter" pub get
+

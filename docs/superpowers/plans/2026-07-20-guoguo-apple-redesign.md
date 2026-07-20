@@ -661,3 +661,4 @@ git commit -m "docs: complete iOS release verification"
 - [ ] Partial service failures never stop unrelated shelves or active playback.
 - [ ] Standard and accessibility goldens are approved; device matrix is complete.
 - [ ] Pinned-SDK `dart format`, `flutter analyze`, unit/widget/golden/integration tests, native XCTest, secret scan, simulator build, and release IPA build all pass.
+

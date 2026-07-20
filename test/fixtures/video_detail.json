@@ -1,0 +1,25 @@
+{
+  "code": 0,
+  "data": {
+    "vod_id": "anime-404",
+    "vod_name": "严格解码示例",
+    "vod_type": "anime",
+    "vod_pic": "https://media.example/posters/404.jpg",
+    "vod_year": 2025,
+    "vod_content": "仅用于 mapper 契约测试。",
+    "vod_play_list": [
+      {
+        "line_id": "line-a",
+        "episodes": [
+          {"episode_id": 1, "title": "第一集"},
+          {"episode_id": "ep-2", "title": "第二集"}
+        ]
+      },
+      {
+        "line_id": "line-empty",
+        "episodes": []
+      }
+    ],
+    "future_optional_field": "ignored"
+  }
+}

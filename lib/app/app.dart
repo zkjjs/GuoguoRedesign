@@ -1,0 +1,99 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../core/theme/accessibility_preferences.dart';
+import '../core/theme/cinema_theme.dart';
+import 'router.dart';
+
+export 'router.dart' show createAppRouter;
+
+class GuoguoApp extends StatefulWidget {
+  GuoguoApp({
+    this.router,
+    this.routerFactory,
+    Stream<bool>? reduceTransparencyChanges,
+    this.theme,
+    super.key,
+  }) : assert(router == null || routerFactory == null),
+       reduceTransparencyChanges =
+           reduceTransparencyChanges ??
+           AccessibilityPreferences().reduceTransparencyChanges;
+
+  final GoRouter? router;
+  final GoRouter Function()? routerFactory;
+  final Stream<bool> reduceTransparencyChanges;
+  final ThemeData? theme;
+
+  @override
+  State<GuoguoApp> createState() => _GuoguoAppState();
+}
+
+class _GuoguoAppState extends State<GuoguoApp> {
+  late GoRouter _router;
+  late bool _ownsRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    _configureRouter();
+  }
+
+  @override
+  void didUpdateWidget(GuoguoApp oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final configurationChanged =
+        !identical(widget.router, oldWidget.router) ||
+        !identical(widget.routerFactory, oldWidget.routerFactory);
+    if (!configurationChanged) {
+      return;
+    }
+
+    if (_ownsRouter) {
+      _router.dispose();
+    }
+    _configureRouter();
+  }
+
+  void _configureRouter() {
+    _ownsRouter = widget.router == null;
+    _router = widget.router ?? (widget.routerFactory ?? createAppRouter).call();
+  }
+
+  @override
+  void dispose() {
+    if (_ownsRouter) {
+      _router.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final inheritedMediaQuery = MediaQuery.maybeOf(context);
+
+    return StreamBuilder<bool>(
+      stream: widget.reduceTransparencyChanges,
+      initialData: false,
+      builder: (context, snapshot) => MaterialApp.router(
+        title: '果果',
+        debugShowCheckedModeBanner: false,
+        theme: widget.theme ?? CinemaTheme.dark(),
+        darkTheme: widget.theme ?? CinemaTheme.dark(),
+        themeMode: ThemeMode.dark,
+        routerConfig: _router,
+        builder: (context, child) {
+          Widget result = AccessibilityPreferencesScope(
+            reduceTransparency: snapshot.data ?? false,
+            child: child ?? const SizedBox.shrink(),
+          );
+          if (inheritedMediaQuery != null) {
+            result = MediaQuery(data: inheritedMediaQuery, child: result);
+          }
+          return result;
+        },
+      ),
+    );
+  }
+}

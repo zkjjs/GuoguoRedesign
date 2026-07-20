@@ -1,0 +1,30 @@
+{
+  "code": 0,
+  "data": {
+    "list": [
+      {
+        "vod_id": 101,
+        "vod_name": "数字编号电影",
+        "vod_type": "movie",
+        "vod_pic": "https://media.example/posters/101.jpg",
+        "vod_year": "2024",
+        "server_only": "ignored"
+      },
+      {
+        "vod_id": "series-202",
+        "vod_name": "无海报剧集",
+        "vod_type": "series",
+        "vod_pic": "",
+        "vod_year": null
+      },
+      {
+        "vod_id": "legacy-303",
+        "vod_name": "未知分类作品",
+        "vod_type": "documentary",
+        "vod_year": "not-a-year"
+      }
+    ],
+    "next_cursor": "page-2",
+    "unknown_optional": {"ignored": true}
+  }
+}
