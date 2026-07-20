@@ -14,27 +14,32 @@ class AppShell extends StatefulWidget {
   State<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends State<AppShell> {
-  double _contentOpacity = 1;
+class _AppShellState extends State<AppShell>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _contentOpacity = AnimationController(
+    vsync: this,
+    value: 1,
+    duration: const Duration(milliseconds: 180),
+    animationBehavior: AnimationBehavior.preserve,
+  );
+
+  @override
+  void dispose() {
+    _contentOpacity.dispose();
+    super.dispose();
+  }
 
   void _selectBranch(int index) {
     final motion = MotionPolicy.fromMediaQuery(context);
     final changingBranch = index != widget.navigationShell.currentIndex;
 
     if (motion.usesFadeOnly && changingBranch) {
-      setState(() => _contentOpacity = 0);
+      _contentOpacity
+        ..duration = motion.transitionDuration
+        ..forward(from: 0);
     }
 
     widget.navigationShell.goBranch(index, initialLocation: !changingBranch);
-
-    if (motion.usesFadeOnly && changingBranch) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) {
-          return;
-        }
-        setState(() => _contentOpacity = 1);
-      });
-    }
   }
 
   @override
@@ -42,11 +47,9 @@ class _AppShellState extends State<AppShell> {
     final motion = MotionPolicy.fromMediaQuery(context);
 
     final body = motion.usesFadeOnly
-        ? AnimatedOpacity(
+        ? FadeTransition(
             key: const Key('reducedMotionBranchFade'),
             opacity: _contentOpacity,
-            duration: motion.transitionDuration,
-            curve: Curves.linear,
             child: widget.navigationShell,
           )
         : widget.navigationShell;
