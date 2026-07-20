@@ -1,0 +1,5 @@
+{
+  "fixture_boundary": "typed_normalized_address",
+  "url_state": "valid_https",
+  "header_names": ["User-Agent", "Referer", "Cookie"]
+}
