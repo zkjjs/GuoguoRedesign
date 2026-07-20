@@ -37,6 +37,11 @@ void main() {
   ) async {
     final router = createTestRouter();
     addTearDown(router.dispose);
+    tester.binding.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(
+      tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue,
+    );
 
     await tester.pumpWidget(
       MediaQuery(
@@ -70,11 +75,13 @@ void main() {
     await tester.tap(find.text('搜索'));
     await tester.pump();
 
-    final fade = tester.widget<AnimatedOpacity>(
+    final fade = tester.widget<FadeTransition>(
       find.byKey(const Key('reducedMotionBranchFade')),
     );
-    expect(fade.duration, const Duration(milliseconds: 180));
-    expect(fade.opacity, 0);
+    final fadeController = fade.opacity as AnimationController;
+    expect(fadeController.duration, const Duration(milliseconds: 180));
+    expect(fadeController.animationBehavior, AnimationBehavior.preserve);
+    expect(fade.opacity.value, closeTo(0, 0.001));
     expect(fade.child, isA<StatefulNavigationShell>());
     expect(
       find.descendant(
@@ -96,8 +103,11 @@ void main() {
       );
     }
 
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 180));
+    await tester.pump(const Duration(milliseconds: 90));
+    expect(fade.opacity.value, closeTo(0.5, 0.05));
+
+    await tester.pump(const Duration(milliseconds: 90));
+    expect(fade.opacity.value, closeTo(1, 0.001));
     expect(tester.takeException(), isNull);
     expect(router.routeInformationProvider.value.uri.path, '/search');
 
