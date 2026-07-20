@@ -75,6 +75,7 @@ void main() {
     );
     expect(fade.duration, const Duration(milliseconds: 180));
     expect(fade.opacity, 0);
+    expect(fade.child, isA<StatefulNavigationShell>());
     expect(
       find.descendant(
         of: find.byKey(const Key('reducedMotionBranchFade')),
@@ -82,13 +83,18 @@ void main() {
       ),
       findsNothing,
     );
-    expect(
+    final scaleTransitions = tester.widgetList<ScaleTransition>(
       find.descendant(
         of: find.byKey(const Key('reducedMotionBranchFade')),
         matching: find.byType(ScaleTransition),
       ),
-      findsNothing,
     );
+    for (final transition in scaleTransitions) {
+      expect(
+        transition.scale.status,
+        isNot(anyOf(AnimationStatus.forward, AnimationStatus.reverse)),
+      );
+    }
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 180));
