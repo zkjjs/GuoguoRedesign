@@ -1,0 +1,26 @@
+{
+  "name": "apple_dark",
+  "name_cn": "Apple 深色",
+  "iconfont": "iconfont.ttf",
+  "values": {
+    "status_bar_color": "light",
+    "background_color": "0xFF000000",
+    "component_background_color": "0xFF1C1C1E",
+    "secondary_component_background_color": "0xFF2C2C2E",
+    "active_color": "0xFF0A84FF",
+    "gradient_active_color": "0xFF0A84FF",
+    "unselected_item_color": "0xFF8E8E93",
+    "disable_item_color": "0xFF636366",
+    "light_color": "0xFFFFFFFF",
+    "light_text_color": "0xFFFFFFFF",
+    "secondary_text_color": "0xFF98989D",
+    "tertiary_text_color": "0xFFAEAEB2",
+    "vip_text_color": "0xFFFFFFFF",
+    "rank_1_color": "0xFFFF453A",
+    "rank_2_color": "0xFFFF9F0A",
+    "rank_3_color": "0xFFFFD60A",
+    "rank_4_color": "0x00000000",
+    "comment_background_color": "0xFF1C1C1E"
+  }
+}
+
