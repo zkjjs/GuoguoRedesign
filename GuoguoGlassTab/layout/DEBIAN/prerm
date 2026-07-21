@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+TARGET_ID="com.example.dongmangongheguo"
+BACKUP="/var/mobile/Library/GuoguoGlassTab/default_dark.zip.bak"
+
+[ -f "$BACKUP" ] || exit 0
+
+for plist in /var/containers/Bundle/Application/*/Runner.app/Info.plist; do
+    [ -f "$plist" ] || continue
+    if plutil -p "$plist" 2>/dev/null | grep -q "$TARGET_ID"; then
+        APP="${plist%/Info.plist}"
+        ARCHIVE="$APP/Frameworks/App.framework/flutter_assets/assets/default_dark.zip"
+        if [ -f "$ARCHIVE" ]; then
+            cp "$BACKUP" "$ARCHIVE"
+            chown mobile:mobile "$ARCHIVE" 2>/dev/null || true
+            chmod 0644 "$ARCHIVE"
+        fi
+        break
+    fi
+done
+
+killall -9 Runner 2>/dev/null || true
+exit 0
+
