@@ -18,5 +18,6 @@ done
 
 grep -q 'FLEX' "$TWEAK"
 grep -q 'GTTabIndexForX' "$VIEW"
+grep -Fq 'GTInstallOverlay((UIViewController *)self)' "$TWEAK"
 
 echo "source contract tests passed"
