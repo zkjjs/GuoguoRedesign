@@ -1,0 +1,61 @@
+name: Build Guoguo Glass Tab Deb
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - "GuoguoGlassTab/**"
+      - ".github/workflows/build-guoguo-glass-tab.yml"
+  push:
+    branches: [main, codex/guoguo-glass-tab]
+    paths:
+      - "GuoguoGlassTab/**"
+      - ".github/workflows/build-guoguo-glass-tab.yml"
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Theos
+        shell: bash
+        run: |
+          brew install ldid xz
+          git clone --recursive https://github.com/theos/theos.git "$HOME/theos"
+          sdk_path="$(xcrun --sdk iphoneos --show-sdk-path)"
+          sdk_version="$(xcrun --sdk iphoneos --show-sdk-version)"
+          mkdir -p "$HOME/theos/sdks"
+          ln -s "$sdk_path" "$HOME/theos/sdks/iPhoneOS${sdk_version}.sdk"
+
+      - name: Run contract tests
+        run: |
+          chmod +x GuoguoGlassTab/Tests/*.sh GuoguoGlassTab/layout/DEBIAN/*
+          GuoguoGlassTab/Tests/run-tests.sh
+
+      - name: Build rootful package
+        env:
+          THEOS: ${{ github.workspace }}/../theos
+        run: |
+          export THEOS="$HOME/theos"
+          make -C GuoguoGlassTab clean package FINALPACKAGE=1
+
+      - name: Build rootless package
+        env:
+          THEOS: ${{ github.workspace }}/../theos
+        run: |
+          export THEOS="$HOME/theos"
+          THEOS_PACKAGE_SCHEME=rootless make -C GuoguoGlassTab clean package FINALPACKAGE=1
+
+      - name: List packages
+        run: ls -lh GuoguoGlassTab/packages/*.deb
+
+      - name: Upload deb packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: GuoguoGlassTab-debs
+          path: GuoguoGlassTab/packages/*.deb
+          if-no-files-found: error

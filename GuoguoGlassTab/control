@@ -1,0 +1,10 @@
+Package: com.zkjjs.guoguoglasstab
+Name: Guoguo Glass Tab
+Version: 0.1.0
+Architecture: iphoneos-arm
+Description: Apple-style floating glass tab bar and reversible system-color theme for Guoguo.
+Maintainer: zkjjs
+Author: zkjjs
+Section: Tweaks
+Depends: mobilesubstrate, firmware (>= 15.0), unzip, zip
+

@@ -1,17 +1,21 @@
-# guoguo
+# Guoguo Redesign
 
-A new Flutter project.
+This repository contains the Guoguo UI redesign work.
 
-## Getting Started
+## Guoguo Glass Tab tweak
 
-This project is a starting point for a Flutter application.
+`GuoguoGlassTab/` builds a reversible jailbreak tweak for bundle ID
+`com.example.dongmangongheguo`.
 
-A few resources to get you started if this is your first Flutter project:
+It provides:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- a four-item floating ultra-thin-material tab capsule;
+- system-blue selection and neutral iOS dark colors;
+- suppression of the injected FLEX overlay;
+- a reversible theme-archive replacement that restores the original on uninstall;
+- rootful and rootless `.deb` artifacts from GitHub Actions.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The tweak preserves the existing Flutter screens and forwards tab touches to the
+original app rather than replacing its application logic.
+
+Build artifacts are produced by the `Build Guoguo Glass Tab Deb` workflow.
