@@ -41,13 +41,13 @@ static GTGlassTabView *GTInstallOverlay(UIViewController *controller) {
 
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
-    GTInstallOverlay(self);
+    GTInstallOverlay((UIViewController *)self);
     GTHideFLEXWindows();
 }
 
 - (void)viewDidLayoutSubviews {
     %orig;
-    GTGlassTabView *overlay = GTInstallOverlay(self);
+    GTGlassTabView *overlay = GTInstallOverlay((UIViewController *)self);
     [overlay setNeedsLayout];
     [overlay layoutIfNeeded];
 }
@@ -108,4 +108,3 @@ static GTGlassTabView *GTInstallOverlay(UIViewController *controller) {
         GTHideFLEXWindows();
     });
 }
-
