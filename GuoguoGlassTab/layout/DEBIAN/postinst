@@ -1,0 +1,42 @@
+#!/bin/sh
+set -eu
+
+PACKAGE_ID="com.zkjjs.guoguoglasstab"
+TARGET_ID="com.example.dongmangongheguo"
+BACKUP_DIR="/var/mobile/Library/GuoguoGlassTab"
+BACKUP="$BACKUP_DIR/default_dark.zip.bak"
+WORK="/var/tmp/guoguo-glass-tab-theme"
+
+THEME="$(dpkg -L "$PACKAGE_ID" | grep '/GuoguoGlassTab/theme.json$' | head -n 1)"
+APP=""
+
+for plist in /var/containers/Bundle/Application/*/Runner.app/Info.plist; do
+    [ -f "$plist" ] || continue
+    if plutil -p "$plist" 2>/dev/null | grep -q "$TARGET_ID"; then
+        APP="${plist%/Info.plist}"
+        break
+    fi
+done
+
+[ -n "$APP" ] || exit 0
+ARCHIVE="$APP/Frameworks/App.framework/flutter_assets/assets/default_dark.zip"
+[ -f "$ARCHIVE" ] || exit 0
+
+mkdir -p "$BACKUP_DIR" "$WORK"
+if [ ! -f "$BACKUP" ]; then
+    cp "$ARCHIVE" "$BACKUP"
+fi
+
+find "$WORK" -mindepth 1 -maxdepth 1 -exec rm -r -- {} + 2>/dev/null || true
+unzip -qq "$BACKUP" -d "$WORK"
+cp "$THEME" "$WORK/theme.json"
+(
+    cd "$WORK"
+    zip -q -r "$WORK/default_dark.zip" . -x default_dark.zip
+)
+cp "$WORK/default_dark.zip" "$ARCHIVE"
+chown mobile:mobile "$ARCHIVE" 2>/dev/null || true
+chmod 0644 "$ARCHIVE"
+killall -9 Runner 2>/dev/null || true
+exit 0
+
