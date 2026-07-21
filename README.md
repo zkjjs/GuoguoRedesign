@@ -18,3 +18,4 @@ It provides:
 The tweak preserves the existing Flutter screens and forwards tab touches to the
 original app rather than replacing its application logic.
 
+Build artifacts are produced by the `Build Guoguo Glass Tab Deb` workflow.
