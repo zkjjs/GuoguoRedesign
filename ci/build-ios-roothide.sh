@@ -60,6 +60,107 @@ pub extern "C" fn __chkstk_darwin() {}
 text = text.replace(anchor, anchor + ios_stack_probe, 1)
 main.write_text(text)
 
+# Code Mode is disabled only for this iOS port because rusty_v8 does not ship
+# an aarch64-apple-ios archive. Keep the protocol API so the rest of Codex is
+# unchanged, but replace the runtime providers with explicit unavailable stubs.
+code_mode_cargo = src / "codex-rs/code-mode/Cargo.toml"
+code_mode_cargo.write_text('''[package]
+edition.workspace = true
+license.workspace = true
+name = "codex-code-mode"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "codex_code_mode"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+codex-code-mode-protocol = { workspace = true }
+tokio-util = { workspace = true, features = ["rt"] }
+''')
+
+code_mode_lib = src / "codex-rs/code-mode/src/lib.rs"
+code_mode_lib.write_text('''use std::path::PathBuf;
+use std::sync::Arc;
+
+pub use codex_code_mode_protocol::*;
+use tokio_util::sync::CancellationToken;
+
+const IOS_DISABLED_MESSAGE: &str = "code mode is unavailable in this iOS build";
+
+pub struct NoopCodeModeSessionDelegate;
+
+impl CodeModeSessionDelegate for NoopCodeModeSessionDelegate {
+    fn invoke_tool<'a>(
+        &'a self,
+        _invocation: CodeModeNestedToolCall,
+        _cancellation_token: CancellationToken,
+    ) -> ToolInvocationFuture<'a> {
+        Box::pin(async { Err(IOS_DISABLED_MESSAGE.to_string()) })
+    }
+
+    fn notify<'a>(
+        &'a self,
+        _call_id: String,
+        _cell_id: CellId,
+        _text: String,
+        _cancellation_token: CancellationToken,
+    ) -> NotificationFuture<'a> {
+        Box::pin(async { Err(IOS_DISABLED_MESSAGE.to_string()) })
+    }
+
+    fn cell_closed(&self, _cell_id: &CellId) {}
+}
+
+pub struct InProcessCodeModeSessionProvider;
+
+impl Default for InProcessCodeModeSessionProvider {
+    fn default() -> Self {
+        Self
+    }
+}
+
+impl CodeModeSessionProvider for InProcessCodeModeSessionProvider {
+    fn create_session<'a>(
+        &'a self,
+        _delegate: Arc<dyn CodeModeSessionDelegate>,
+    ) -> CodeModeSessionProviderFuture<'a> {
+        Box::pin(async { Err(IOS_DISABLED_MESSAGE.to_string()) })
+    }
+}
+
+pub struct ProcessOwnedCodeModeSessionProvider {
+    _host_program: PathBuf,
+}
+
+impl ProcessOwnedCodeModeSessionProvider {
+    pub fn with_host_program(host_program: PathBuf) -> Self {
+        Self {
+            _host_program: host_program,
+        }
+    }
+}
+
+impl Default for ProcessOwnedCodeModeSessionProvider {
+    fn default() -> Self {
+        Self::with_host_program(PathBuf::from("codex-code-mode-host"))
+    }
+}
+
+impl CodeModeSessionProvider for ProcessOwnedCodeModeSessionProvider {
+    fn create_session<'a>(
+        &'a self,
+        _delegate: Arc<dyn CodeModeSessionDelegate>,
+    ) -> CodeModeSessionProviderFuture<'a> {
+        Box::pin(async { Err(IOS_DISABLED_MESSAGE.to_string()) })
+    }
+}
+''')
+
 assert 'target_os = "ios"' in hardening.read_text()
 assert '__chkstk_darwin' in main.read_text()
 PY
@@ -81,15 +182,15 @@ export CXXFLAGS_aarch64_apple_ios="$CFLAGS_aarch64_apple_ios"
 export CARGO_TARGET_AARCH64_APPLE_IOS_LINKER="$CC_aarch64_apple_ios"
 
 cd "$SRC/codex-rs"
+if cargo tree -p codex-cli --target "$TARGET" | grep -E '(^| )v8 v[0-9]'; then
+    echo "V8 unexpectedly remains in the iOS dependency graph" >&2
+    exit 1
+fi
 cargo build -p codex-cli --release --target aarch64-apple-ios
-cargo build -p codex-code-mode-host --release --target aarch64-apple-ios
 
 CODEX_BIN="$SRC/codex-rs/target/$TARGET/release/codex"
-CODE_MODE_BIN="$SRC/codex-rs/target/$TARGET/release/codex-code-mode-host"
 test -x "$CODEX_BIN"
-test -x "$CODE_MODE_BIN"
 file "$CODEX_BIN" | grep -E 'Mach-O 64-bit.*arm64'
-file "$CODE_MODE_BIN" | grep -E 'Mach-O 64-bit.*arm64'
 strings "$CODEX_BIN" | grep -F -m1 "$VERSION" >/dev/null
 
 cd "$WORK"
@@ -106,7 +207,6 @@ mkdir -p "$STAGE/DEBIAN" "$MODULE" "$VENDOR/codex" "$VENDOR/path"
 mkdir -p "$STAGE/var/jb/usr/local/bin" "$STAGE/var/jb/usr/local/share/entitlements"
 cp -R "$WORK/npm/package/." "$MODULE/"
 cp "$CODEX_BIN" "$VENDOR/codex/codex"
-cp "$CODE_MODE_BIN" "$STAGE/var/jb/usr/local/bin/codex-code-mode-host"
 
 cat > "$VENDOR/path/rg" <<'EOF'
 #!/bin/sh
@@ -176,6 +276,7 @@ Depends: firmware (>= 14.0), nodejs22-ios-roothide (>= 22.12.0), ldid
 Description: OpenAI Codex CLI 0.145.0 for roothide iOS arm64
  Native aarch64-apple-ios build of the OpenAI Codex coding agent.
  Preserves the existing roothide configuration directory and custom providers.
+ JavaScript Code Mode is disabled because upstream V8 has no iOS arm64 archive.
 EOF
 
 cat > "$STAGE/DEBIAN/postinst" <<'EOF'
@@ -193,8 +294,7 @@ ENTS="${PREFIX}/usr/local/share/entitlements/codex.plist"
 LDID="${PREFIX}/usr/bin/ldid"
 
 for binary in \
-    "${PREFIX}/usr/local/lib/node_modules/@openai/codex/vendor/aarch64-apple-ios/codex/codex" \
-    "${PREFIX}/usr/local/bin/codex-code-mode-host"
+    "${PREFIX}/usr/local/lib/node_modules/@openai/codex/vendor/aarch64-apple-ios/codex/codex"
 do
     [ -f "$binary" ] || continue
     chmod 755 "$binary"
@@ -208,7 +308,6 @@ EOF
 
 chmod 755 "$STAGE/DEBIAN/postinst"
 chmod 755 "$STAGE/var/jb/usr/local/bin/codex"
-chmod 755 "$STAGE/var/jb/usr/local/bin/codex-code-mode-host"
 chmod 755 "$VENDOR/codex/codex" "$VENDOR/path/rg"
 chmod 644 "$STAGE/DEBIAN/control" "$STAGE/var/jb/usr/local/share/entitlements/codex.plist"
 
@@ -232,6 +331,7 @@ Codex CLI $VERSION native iOS arm64 build for roothide
 Package version: $PKG_VERSION
 Upstream tag: $UPSTREAM_TAG
 Configuration path is preserved at <jbroot>/var/mobile/codex/.codex
+JavaScript Code Mode/V8 is disabled; normal shell, Skills, MCP and provider features remain.
 EOF
 
 cd "$DIST"
