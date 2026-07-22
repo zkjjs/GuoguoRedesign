@@ -3,7 +3,7 @@ set -euo pipefail
 
 UPSTREAM_TAG="rust-v0.145.0"
 VERSION="0.145.0"
-PKG_VERSION="0.145.0-1"
+PKG_VERSION="0.145.0-2"
 TARGET="aarch64-apple-ios"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORK="$ROOT/.codex-ios-work"
@@ -271,7 +271,7 @@ EOF
 cat > "$STAGE/DEBIAN/control" <<'EOF'
 Package: codex-ios-roothide
 Name: codex-ios-roothide
-Version: 0.145.0-1
+Version: 0.145.0-2
 Architecture: iphoneos-arm64e
 Section: Development
 Priority: optional
@@ -315,7 +315,7 @@ chmod 755 "$STAGE/var/jb/usr/local/bin/codex"
 chmod 755 "$VENDOR/codex/codex" "$VENDOR/path/rg"
 chmod 644 "$STAGE/DEBIAN/control" "$STAGE/var/jb/usr/local/share/entitlements/codex.plist"
 
-grep -Fx 'Version: 0.145.0-1' "$STAGE/DEBIAN/control"
+grep -Fx 'Version: 0.145.0-2' "$STAGE/DEBIAN/control"
 grep -Fx 'Architecture: iphoneos-arm64e' "$STAGE/DEBIAN/control"
 sh -n "$STAGE/DEBIAN/postinst"
 zsh -n "$STAGE/var/jb/usr/local/bin/codex"
@@ -326,7 +326,11 @@ if ! command -v dpkg-deb >/dev/null 2>&1; then
 fi
 
 DEB="$DIST/codex-ios-roothide-$PKG_VERSION.deb"
-COPYFILE_DISABLE=1 dpkg-deb --root-owner-group -Zxz -b "$STAGE" "$DEB"
+# roothide launches Codex as mobile and keeps its configuration below the
+# package's /var/jb tree. Match the original port's numeric mobile ownership so
+# the launcher can create /var/jb/var/mobile/codex/.codex on first start.
+sudo chown -R 501:501 "$STAGE"
+COPYFILE_DISABLE=1 dpkg-deb -Zxz -b "$STAGE" "$DEB"
 dpkg-deb --info "$DEB"
 dpkg-deb --contents "$DEB" > "$DIST/PACKAGE-CONTENTS.txt"
 
