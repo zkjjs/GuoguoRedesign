@@ -297,6 +297,11 @@ fi
 ENTS="${PREFIX}/usr/local/share/entitlements/codex.plist"
 LDID="${PREFIX}/usr/bin/ldid"
 
+# The launcher runs as mobile. Repair the configuration directory explicitly
+# because an older package revision may have installed /var/jb as root-owned.
+mkdir -p "${PREFIX}/var/mobile/codex/.codex"
+chown -R 501:501 "${PREFIX}/var/mobile/codex"
+
 for binary in \
     "${PREFIX}/usr/local/lib/node_modules/@openai/codex/vendor/aarch64-apple-ios/codex/codex"
 do
