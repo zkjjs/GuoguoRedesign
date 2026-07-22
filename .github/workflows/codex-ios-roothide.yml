@@ -1,0 +1,31 @@
+name: Build Codex iOS roothide 0.145.0
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ci/build-ios-roothide.sh"
+      - ".github/workflows/codex-ios-roothide.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build native iOS package
+        shell: bash
+        run: bash ci/build-ios-roothide.sh
+
+      - name: Upload roothide package
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-ios-roothide-0.145.0-1
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
