@@ -31,6 +31,8 @@ old = 'arboard = { version = "3", features = ["wayland-data-control"] }'
 assert old in text
 text = text.replace(old, 'arboard = { version = "3" }', 1)
 text = text.replace('[profile.release]\nlto = "thin"', '[profile.release]\nlto = "off"', 1)
+text = text.replace('debug = "line-tables-only"', 'debug = "none"', 1)
+text = text.replace('strip = false', 'strip = "symbols"', 1)
 text = text.replace('codegen-units = 4', 'codegen-units = 16', 1)
 cargo.write_text(text)
 
@@ -172,6 +174,7 @@ rustup toolchain install 1.95.0 --profile minimal
 rustup target add aarch64-apple-ios --toolchain 1.95.0
 
 export RUSTUP_TOOLCHAIN=1.95.0
+export CARGO_TARGET_DIR="$HOME/codex-ios-target"
 export SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
 export IPHONEOS_DEPLOYMENT_TARGET=14.0
 export CC_aarch64_apple_ios="$(xcrun --sdk iphoneos --find clang)"
@@ -188,10 +191,11 @@ if cargo tree -p codex-cli --target "$TARGET" | grep -E '(^| )v8 v[0-9]'; then
 fi
 cargo build -p codex-cli --release --target aarch64-apple-ios
 
-CODEX_BIN="$SRC/codex-rs/target/$TARGET/release/codex"
+CODEX_BIN="$CARGO_TARGET_DIR/$TARGET/release/codex"
 test -x "$CODEX_BIN"
 file "$CODEX_BIN" | grep -E 'Mach-O 64-bit.*arm64'
-strings "$CODEX_BIN" | grep -F -m1 "$VERSION" >/dev/null
+strings "$CODEX_BIN" > "$WORK/codex.strings"
+grep -F "$VERSION" "$WORK/codex.strings" >/dev/null
 
 cd "$WORK"
 npm pack "@openai/codex@$VERSION" --silent
