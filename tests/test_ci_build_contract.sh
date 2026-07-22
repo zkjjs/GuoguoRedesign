@@ -8,7 +8,7 @@ test -f "$SCRIPT"
 test -f "$WORKFLOW"
 
 grep -F 'UPSTREAM_TAG="rust-v0.145.0"' "$SCRIPT" >/dev/null
-grep -F 'PKG_VERSION="0.145.0-2"' "$SCRIPT" >/dev/null
+grep -F 'PKG_VERSION="0.145.0-3"' "$SCRIPT" >/dev/null
 grep -F 'rustup target add aarch64-apple-ios' "$SCRIPT" >/dev/null
 grep -F 'cargo build -p codex-cli --release --target aarch64-apple-ios' "$SCRIPT" >/dev/null
 grep -F 'code mode is unavailable in this iOS build' "$SCRIPT" >/dev/null
@@ -25,10 +25,15 @@ if grep -F 'cargo build -p codex-code-mode-host' "$SCRIPT" >/dev/null; then
   exit 1
 fi
 grep -F 'Package: codex-ios-roothide' "$SCRIPT" >/dev/null
-grep -F 'Version: 0.145.0-2' "$SCRIPT" >/dev/null
+grep -F 'Version: 0.145.0-3' "$SCRIPT" >/dev/null
 grep -F 'Architecture: iphoneos-arm64e' "$SCRIPT" >/dev/null
 grep -F 'export HOME="${PREFIX}/var/mobile/codex"' "$SCRIPT" >/dev/null
 grep -F 'export CODEX_HOME="${HOME}/.codex"' "$SCRIPT" >/dev/null
+test "$(grep -F -c 'ls -d /var/containers/Bundle/Application/.jbroot-*' "$SCRIPT")" -ge 2
+if grep -F 'find /var/containers/Bundle/Application -maxdepth 1 -type d -name' "$SCRIPT" >/dev/null; then
+  echo "jbroot detection must include roothide symlink entries" >&2
+  exit 1
+fi
 grep -F 'sudo chown -R 501:501 "$STAGE"' "$SCRIPT" >/dev/null
 grep -F 'mkdir -p "${PREFIX}/var/mobile/codex/.codex"' "$SCRIPT" >/dev/null
 grep -F 'chown -R 501:501 "${PREFIX}/var/mobile/codex"' "$SCRIPT" >/dev/null
