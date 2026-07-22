@@ -18,6 +18,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore Rust build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/codex-ios-target
+          key: macos14-arm64-codex-ios-0.145.0-v8-disabled-v1
+
       - name: Build native iOS package
         shell: bash
         run: bash ci/build-ios-roothide.sh
