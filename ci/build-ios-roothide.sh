@@ -3,7 +3,7 @@ set -euo pipefail
 
 UPSTREAM_TAG="rust-v0.145.0"
 VERSION="0.145.0"
-PKG_VERSION="0.145.0-2"
+PKG_VERSION="0.145.0-3"
 TARGET="aarch64-apple-ios"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORK="$ROOT/.codex-ios-work"
@@ -226,7 +226,7 @@ cat > "$STAGE/var/jb/usr/local/bin/codex" <<'EOF'
 if [ -n "${JB_ROOT:-}" ]; then
     PREFIX="$JB_ROOT"
 else
-    PREFIX="$(find /var/containers/Bundle/Application -maxdepth 1 -type d -name '.jbroot-*' 2>/dev/null | head -n 1)"
+    PREFIX="$(ls -d /var/containers/Bundle/Application/.jbroot-* 2>/dev/null | head -n 1)"
     [ -n "$PREFIX" ] || PREFIX="/var/jb"
 fi
 
@@ -271,7 +271,7 @@ EOF
 cat > "$STAGE/DEBIAN/control" <<'EOF'
 Package: codex-ios-roothide
 Name: codex-ios-roothide
-Version: 0.145.0-2
+Version: 0.145.0-3
 Architecture: iphoneos-arm64e
 Section: Development
 Priority: optional
@@ -290,7 +290,7 @@ set -eu
 if [ -n "${JB_ROOT:-}" ]; then
     PREFIX="$JB_ROOT"
 else
-    PREFIX="$(find /var/containers/Bundle/Application -maxdepth 1 -type d -name '.jbroot-*' 2>/dev/null | head -n 1)"
+    PREFIX="$(ls -d /var/containers/Bundle/Application/.jbroot-* 2>/dev/null | head -n 1)"
     [ -n "$PREFIX" ] || PREFIX="/var/jb"
 fi
 
@@ -320,7 +320,7 @@ chmod 755 "$STAGE/var/jb/usr/local/bin/codex"
 chmod 755 "$VENDOR/codex/codex" "$VENDOR/path/rg"
 chmod 644 "$STAGE/DEBIAN/control" "$STAGE/var/jb/usr/local/share/entitlements/codex.plist"
 
-grep -Fx 'Version: 0.145.0-2' "$STAGE/DEBIAN/control"
+grep -Fx 'Version: 0.145.0-3' "$STAGE/DEBIAN/control"
 grep -Fx 'Architecture: iphoneos-arm64e' "$STAGE/DEBIAN/control"
 sh -n "$STAGE/DEBIAN/postinst"
 zsh -n "$STAGE/var/jb/usr/local/bin/codex"
