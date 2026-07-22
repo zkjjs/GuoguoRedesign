@@ -326,7 +326,7 @@ if ! command -v dpkg-deb >/dev/null 2>&1; then
 fi
 
 DEB="$DIST/codex-ios-roothide-$PKG_VERSION.deb"
-COPYFILE_DISABLE=1 dpkg-deb -Zxz -b "$STAGE" "$DEB"
+COPYFILE_DISABLE=1 dpkg-deb --root-owner-group -Zxz -b "$STAGE" "$DEB"
 dpkg-deb --info "$DEB"
 dpkg-deb --contents "$DEB" > "$DIST/PACKAGE-CONTENTS.txt"
 
