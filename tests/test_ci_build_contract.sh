@@ -30,6 +30,8 @@ grep -F 'Architecture: iphoneos-arm64e' "$SCRIPT" >/dev/null
 grep -F 'export HOME="${PREFIX}/var/mobile/codex"' "$SCRIPT" >/dev/null
 grep -F 'export CODEX_HOME="${HOME}/.codex"' "$SCRIPT" >/dev/null
 grep -F 'sudo chown -R 501:501 "$STAGE"' "$SCRIPT" >/dev/null
+grep -F 'mkdir -p "${PREFIX}/var/mobile/codex/.codex"' "$SCRIPT" >/dev/null
+grep -F 'chown -R 501:501 "${PREFIX}/var/mobile/codex"' "$SCRIPT" >/dev/null
 if grep -F 'dpkg-deb --root-owner-group' "$SCRIPT" >/dev/null; then
   echo "roothide package must retain mobile 501/501 data ownership" >&2
   exit 1
