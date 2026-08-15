@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:guoguo/ui/components/apple_glass_surface.dart';
 
 class GlassSearchBar extends StatelessWidget {
