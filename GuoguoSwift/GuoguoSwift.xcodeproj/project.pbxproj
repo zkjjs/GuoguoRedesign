@@ -1,0 +1,183 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* GuoguoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* GuoguoApp.swift */; };
+		A10000000000000000000002 /* APIEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* APIEndpointTests.swift */; };
+		A10000000000000000000003 /* AuthSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* AuthSessionTests.swift */; };
+		A10000000000000000000004 /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* AppStateTests.swift */; };
+		A10000000000000000000005 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* XCTest.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A30000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A40000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A50000000000000000000001;
+			remoteInfo = GuoguoSwift;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* GuoguoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuoguoApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* APIEndpointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpointTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* AuthSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthSessionTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* GuoguoSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GuoguoSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000006 /* GuoguoSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GuoguoSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000007 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A60000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A60000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (A10000000000000000000005 /* XCTest.framework in Frameworks */);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A70000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A70000000000000000000002 /* App */,
+				A70000000000000000000003 /* GuoguoSwiftTests */,
+				A70000000000000000000004 /* Frameworks */,
+				A70000000000000000000005 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A70000000000000000000002 /* App */ = {
+			isa = PBXGroup;
+			children = (A20000000000000000000001 /* GuoguoApp.swift */);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000003 /* GuoguoSwiftTests */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000002 /* APIEndpointTests.swift */,
+				A20000000000000000000003 /* AuthSessionTests.swift */,
+				A20000000000000000000004 /* AppStateTests.swift */,
+			);
+			path = ../GuoguoSwiftTests;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000004 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (A20000000000000000000007 /* XCTest.framework */);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000005 /* GuoguoSwift.app */,
+				A20000000000000000000006 /* GuoguoSwiftTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* GuoguoSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000001 /* Build configuration list for PBXNativeTarget "GuoguoSwift" */;
+			buildPhases = (
+				A90000000000000000000001 /* Sources */,
+				A60000000000000000000001 /* Frameworks */,
+				AA0000000000000000000001 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = GuoguoSwift;
+			productName = GuoguoSwift;
+			productReference = A20000000000000000000005 /* GuoguoSwift.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A50000000000000000000002 /* GuoguoSwiftTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000002 /* Build configuration list for PBXNativeTarget "GuoguoSwiftTests" */;
+			buildPhases = (
+				A90000000000000000000002 /* Sources */,
+				A60000000000000000000002 /* Frameworks */,
+				AA0000000000000000000002 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = (AB0000000000000000000001 /* PBXTargetDependency */);
+			name = GuoguoSwiftTests;
+			productName = GuoguoSwiftTests;
+			productReference = A20000000000000000000006 /* GuoguoSwiftTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A40000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					A50000000000000000000001 = {CreatedOnToolsVersion = 16.4;};
+					A50000000000000000000002 = {CreatedOnToolsVersion = 16.4; TestTargetID = A50000000000000000000001;};
+				};
+			};
+			buildConfigurationList = A80000000000000000000003 /* Build configuration list for PBXProject "GuoguoSwift" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = A70000000000000000000001;
+			productRefGroup = A70000000000000000000005 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A50000000000000000000001 /* GuoguoSwift */, A50000000000000000000002 /* GuoguoSwiftTests */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA0000000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;};
+		AA0000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A90000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* GuoguoApp.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
+		A90000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000002 /* APIEndpointTests.swift in Sources */, A10000000000000000000003 /* AuthSessionTests.swift in Sources */, A10000000000000000000004 /* AppStateTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AB0000000000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = A50000000000000000000001 /* GuoguoSwift */; targetProxy = A30000000000000000000001 /* PBXContainerItemProxy */;};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AC0000000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;}; name = Debug;};
+		AC0000000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;}; name = Release;};
+		AC0000000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = Guoguo; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1;}; name = Debug;};
+		AC0000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = Guoguo; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1;}; name = Release;};
+		AC0000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GuoguoSwift.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GuoguoSwift";}; name = Debug;};
+		AC0000000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GuoguoSwift.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GuoguoSwift";}; name = Release;};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A80000000000000000000001 /* Build configuration list for PBXNativeTarget "GuoguoSwift" */ = {isa = XCConfigurationList; buildConfigurations = (AC0000000000000000000003 /* Debug */, AC0000000000000000000004 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;};
+		A80000000000000000000002 /* Build configuration list for PBXNativeTarget "GuoguoSwiftTests" */ = {isa = XCConfigurationList; buildConfigurations = (AC0000000000000000000005 /* Debug */, AC0000000000000000000006 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;};
+		A80000000000000000000003 /* Build configuration list for PBXProject "GuoguoSwift" */ = {isa = XCConfigurationList; buildConfigurations = (AC0000000000000000000001 /* Debug */, AC0000000000000000000002 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;};
+/* End XCConfigurationList section */
+	};
+	rootObject = A40000000000000000000001 /* Project object */;
+}
