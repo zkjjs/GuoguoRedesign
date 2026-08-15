@@ -16,6 +16,7 @@
 		A10000000000000000000008 /* AuthSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* AuthSession.swift */; };
 		A10000000000000000000009 /* APIRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* APIRequestTests.swift */; };
 		A1000000000000000000000A /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* APIRequest.swift */; };
+		A1000000000000000000000B /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* APIClientTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,7 @@
 		A2000000000000000000000A /* AuthSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthSession.swift; sourceTree = "<group>"; };
 		A2000000000000000000000B /* APIRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequestTests.swift; sourceTree = "<group>"; };
 		A2000000000000000000000C /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				A20000000000000000000003 /* AuthSessionTests.swift */,
 				A20000000000000000000004 /* AppStateTests.swift */,
 				A2000000000000000000000B /* APIRequestTests.swift */,
+				A2000000000000000000000D /* APIClientTests.swift */,
 			);
 			path = ../GuoguoSwiftTests;
 			sourceTree = "<group>";
@@ -188,7 +191,7 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		A90000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* GuoguoApp.swift in Sources */, A10000000000000000000006 /* AppState.swift in Sources */, A10000000000000000000007 /* APIEndpoint.swift in Sources */, A10000000000000000000008 /* AuthSession.swift in Sources */, A1000000000000000000000A /* APIRequest.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
-		A90000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000002 /* APIEndpointTests.swift in Sources */, A10000000000000000000003 /* AuthSessionTests.swift in Sources */, A10000000000000000000004 /* AppStateTests.swift in Sources */, A10000000000000000000009 /* APIRequestTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
+		A90000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000002 /* APIEndpointTests.swift in Sources */, A10000000000000000000003 /* AuthSessionTests.swift in Sources */, A10000000000000000000004 /* AppStateTests.swift in Sources */, A10000000000000000000009 /* APIRequestTests.swift in Sources */, A1000000000000000000000B /* APIClientTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
