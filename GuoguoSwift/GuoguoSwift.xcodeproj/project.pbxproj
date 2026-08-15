@@ -11,6 +11,9 @@
 		A10000000000000000000003 /* AuthSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* AuthSessionTests.swift */; };
 		A10000000000000000000004 /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* AppStateTests.swift */; };
 		A10000000000000000000005 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* XCTest.framework */; };
+		A10000000000000000000006 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* AppState.swift */; };
+		A10000000000000000000007 /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* APIEndpoint.swift */; };
+		A10000000000000000000008 /* AuthSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* AuthSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +34,9 @@
 		A20000000000000000000005 /* GuoguoSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GuoguoSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000006 /* GuoguoSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GuoguoSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000007 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		A20000000000000000000008 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
+		A2000000000000000000000A /* AuthSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthSession.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				A70000000000000000000002 /* App */,
+				A70000000000000000000006 /* Core */,
 				A70000000000000000000003 /* GuoguoSwiftTests */,
 				A70000000000000000000004 /* Frameworks */,
 				A70000000000000000000005 /* Products */,
@@ -61,7 +68,10 @@
 		};
 		A70000000000000000000002 /* App */ = {
 			isa = PBXGroup;
-			children = (A20000000000000000000001 /* GuoguoApp.swift */);
+			children = (
+				A20000000000000000000001 /* GuoguoApp.swift */,
+				A20000000000000000000008 /* AppState.swift */,
+			);
 			path = App;
 			sourceTree = "<group>";
 		};
@@ -88,6 +98,21 @@
 				A20000000000000000000006 /* GuoguoSwiftTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000006 /* Core */ = {
+			isa = PBXGroup;
+			children = (A70000000000000000000007 /* Network */);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000007 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000009 /* APIEndpoint.swift */,
+				A2000000000000000000000A /* AuthSession.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,7 +181,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A90000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* GuoguoApp.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
+		A90000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* GuoguoApp.swift in Sources */, A10000000000000000000006 /* AppState.swift in Sources */, A10000000000000000000007 /* APIEndpoint.swift in Sources */, A10000000000000000000008 /* AuthSession.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
 		A90000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000002 /* APIEndpointTests.swift in Sources */, A10000000000000000000003 /* AuthSessionTests.swift in Sources */, A10000000000000000000004 /* AppStateTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0;};
 /* End PBXSourcesBuildPhase section */
 
@@ -167,9 +192,9 @@
 /* Begin XCBuildConfiguration section */
 		AC0000000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;}; name = Debug;};
 		AC0000000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;}; name = Release;};
-		AC0000000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = Guoguo; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1;}; name = Debug;};
+		AC0000000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = Guoguo; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1;}; name = Debug;};
 		AC0000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = Guoguo; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1;}; name = Release;};
-		AC0000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GuoguoSwift.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GuoguoSwift";}; name = Debug;};
+		AC0000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GuoguoSwift.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GuoguoSwift";}; name = Debug;};
 		AC0000000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.guoguo.swift.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GuoguoSwift.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GuoguoSwift";}; name = Release;};
 /* End XCBuildConfiguration section */
 
