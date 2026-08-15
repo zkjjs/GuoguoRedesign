@@ -4,7 +4,7 @@ import SwiftUI
 struct GuoguoApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("Guoguo")
+            RootView()
         }
     }
 }
