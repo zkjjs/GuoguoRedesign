@@ -1,0 +1,104 @@
+name: Build SwiftUI iOS IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - rewrite/swiftui-ios16
+    paths:
+      - GuoguoSwift/**
+      - GuoguoSwiftTests/**
+      - .github/workflows/swiftui-ios.yml
+  pull_request:
+    paths:
+      - GuoguoSwift/**
+      - GuoguoSwiftTests/**
+      - .github/workflows/swiftui-ios.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: guoguo-swiftui-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-build:
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16.4
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Verify iOS deployment target
+        run: |
+          set -euo pipefail
+          value=$(xcodebuild -project GuoguoSwift/GuoguoSwift.xcodeproj -target GuoguoSwift -showBuildSettings | awk '/IPHONEOS_DEPLOYMENT_TARGET/ {print $3; exit}')
+          test "$value" = "16.0"
+
+      - name: Resolve simulator
+        id: simulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          udid=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(device["udid"] for runtime, devices in d.items() if "iOS" in runtime for device in devices if device["name"].startswith("iPhone")))')
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: Run XCTest
+        run: |
+          xcodebuild \
+            -project GuoguoSwift/GuoguoSwift.xcodeproj \
+            -scheme GuoguoSwift \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}' \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+
+      - name: Build unsigned device app
+        if: success()
+        run: |
+          xcodebuild \
+            -project GuoguoSwift/GuoguoSwift.xcodeproj \
+            -scheme GuoguoSwift \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Package unsigned IPA
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_PATH="build/DerivedData/Build/Products/Release-iphoneos/GuoguoSwift.app"
+          test -d "$APP_PATH"
+          rm -rf build/ipa
+          mkdir -p build/ipa/Payload
+          cp -R "$APP_PATH" build/ipa/Payload/GuoguoSwift.app
+          cd build/ipa
+          /usr/bin/zip -qry ../GuoguoSwift-unsigned.ipa Payload
+
+      - name: Upload unsigned IPA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GuoguoSwift-unsigned-ipa
+          path: build/GuoguoSwift-unsigned.ipa
+          retention-days: 14
+
+      - name: Upload app bundle
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GuoguoSwift-app
+          path: build/DerivedData/Build/Products/Release-iphoneos/GuoguoSwift.app
+          retention-days: 14
