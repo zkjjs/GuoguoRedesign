@@ -40,8 +40,9 @@ jobs:
       - name: Verify iOS deployment target
         run: |
           set -euo pipefail
-          value=$(xcodebuild -project GuoguoSwift/GuoguoSwift.xcodeproj -target GuoguoSwift -showBuildSettings | awk '/IPHONEOS_DEPLOYMENT_TARGET/ {print $3; exit}')
-          test "$value" = "16.0"
+          settings=$(xcodebuild -project GuoguoSwift/GuoguoSwift.xcodeproj -target GuoguoSwift -configuration Debug -showBuildSettings)
+          printf '%s\n' "$settings" | grep 'IPHONEOS_DEPLOYMENT_TARGET'
+          printf '%s\n' "$settings" | grep -Eq '^[[:space:]]*IPHONEOS_DEPLOYMENT_TARGET = 16\.0$'
 
       - name: Resolve simulator
         id: simulator
